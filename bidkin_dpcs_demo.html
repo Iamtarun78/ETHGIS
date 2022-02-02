@@ -1,0 +1,212 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>World Bank School Mapping and Analysis</title>
+  <meta name="keywords" content="ADSYS" />
+  <meta name="description" content="ADSYS" />
+  <!-- <link rel="shortcut icon" href="javascript:void(0);" type="image/x-icon" /> -->
+  <link href="css/bootstrap.min.css" rel="stylesheet" />
+  <link href="css/font-awesome.min.css" rel="stylesheet" />
+  <link href="css/animate.css" rel="stylesheet" />
+  <link href="css/jquery.mCustomScrollbar.min.css" rel="stylesheet" />
+  <link href="css/icons.css" rel="stylesheet" />
+  <link href="css/site.css" rel="stylesheet" />
+  <!-- <script rel="javascript" type="text/javascript" href="js/jquery-1.11.3.min.js"></script> -->
+  <script src="js/jquery-2.1.1.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/bootstrap-datepicker.min.js"></script>
+  <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
+
+  <!-- Include Openlayers API -->
+  <link rel="stylesheet" href="https://openlayers.org/en/v4.6.5/css/ol.css" type="text/css" />
+  <link rel="stylesheet" href="https://unpkg.com/ol-popup@4.0.0/src/ol-popup.css" />
+  <!-- The line below is only needed for old environments like Internet Explorer and Android 4.x -->
+  <script
+    src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
+  <script src="https://openlayers.org/en/v4.6.5/build/ol.js"></script>
+  <script src="https://unpkg.com/ol-popup@4.0.0"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.2.61/jspdf.min.js"></script> 
+
+  <style>
+    .map {
+      height: 650px;
+      width: 100%;
+      position: relative;
+    }
+
+  </style>
+  <!-- Openlayers API Scripts End -->
+</head>
+
+<body>
+  <!-- <div id="loaderPage">
+    <img src="images/loader.gif" alt="Odisha Govt. Logo" />
+  </div> -->
+  <div id="map" class="map"></div>
+
+
+  <script>
+    const Config_URL = "203.193.144.116"
+    /*Layers And Source*/
+    //Base Layer and Sources
+    var satelliteSource = new ol.source.XYZ({
+      url: 'http://mt0.google.com/vt/lyrs=y&hl=en&x={x}&y={y}&z={z}'
+    });
+    var osmSource = new ol.source.OSM();
+
+    var baseLayer = new ol.layer.Tile({
+      source: osmSource
+    });
+
+
+
+    /***************WMS Layer Of Toilet**********************/
+    var wmsSource = new ol.source.ImageWMS({
+      url: "http://localhost:8080/geoserver/wms",
+      params: { 'LAYERS': "bidkin_stg:bidkin_dpcs_plot" },
+      serverType: "geoserver",
+      crossOrigin: "anonymous"
+    });
+
+    var wmsLayer = new ol.layer.Image({
+      source: wmsSource
+    });
+
+
+
+    var view = new ol.View({
+      center: ol.proj.transform([75.3448237, 19.7074587], 'EPSG:4326', 'EPSG:3857'),
+      zoom: 13
+    });
+
+    var map = new ol.Map({
+      controls: ol.control.defaults({
+        attributionOptions: {
+          collapsible: false
+        }
+      }),
+      interactions: ol.interaction.defaults().extend([
+        new ol.interaction.DragRotateAndZoom()
+      ]),
+      layers: [baseLayer, wmsLayer],
+
+      target: "map",
+
+      view: view
+    });
+
+    var scaleLineControl = new ol.control.ScaleLine();
+    map.addControl(scaleLineControl);
+
+  </script>
+
+  <!-- Modal -->
+  <div id="aboutconten" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">
+            &times;
+          </button>
+          <h4 class="modal-title">About ETH School Mapping</h4>
+        </div>
+        <div class="modal-body">
+          <p>
+            The World Bank education team in Ethiopia seeks the professional
+            services of a firm specializing in GIS analysis to develop school
+            maps for Ethiopia. The school mapping exercise will serve as an
+            input in determining where, when, and what type of schools to
+            construct by the Federal Ministry of Education, Regional Education
+            Bureaus, Zonal and Woreda Education offices. Hence, school
+            construction can be based on objective measures.
+          </p>
+          <br />
+          <p>
+            The proposed analysis will utilize GIS methods using spatial
+            (geo-referenced) and non-spatial attribute data. A census of all
+            schools (pre-primary (O-class) up to secondary schools including
+            private, public, etc.) in Ethiopia will be conducted to collect
+            location coordinates and other school-level administration data.
+            Secondary data from previous surveys such as the Demographic and
+            Health Surveys (DHS); Household, Income, and Consumption
+            Expenditure (HICE); and World Banks’ Living Standards Measurement
+            Surveys (LSMS) for Ethiopia will be utilized to complement the
+            survey. Ministry of Education also has GIS data for many schools,
+            approximately 60 to 70 percent of all public schools. While some
+            of the data are obsolete, a selected firm may be able to make use
+            of the available data to increase efficiency of data collection.
+            The usage of the GIS data available in the Ministry should be
+            approved by the Ministry.
+          </p>
+          <br />
+          <p>
+            The proposed analysis will provide a broad overview of the current
+            school distribution, the synergy in the distribution of primary
+            and secondary schools, and picture of the state of education
+            resources allocation by developing and launching a spatial dataset
+            with a graphic and visual web interface It will also identify
+            potential channels of influence and partners for engagement to
+            achieve equity and quality in the education sector in Ethiopia.
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="myModalSchoolDtl" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+              aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel"></h4>
+        </div>
+        <div class="modal-body">
+          <div id="scholDetalmodal">
+            <div class="col-sm-6">
+              <div class="school-slider">
+                <div class="item active" id="divimg1">
+                  <!-- <img src="images/Gulen-schools4.jpg" id="img1" alt="Gulen School"> -->
+                  <div class="item active" id="divimg1">
+                    <img id="img1" alt="Gulen School" style="object-fit: cover;
+                    max-height: 307px;
+                    width: 100%;
+                    display: block;
+                    margin: 0px auto;">
+
+                  </div>
+
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6 p-l-0">
+              <div class="school-map">
+                <div id="map1" style="height: 307px"></div>
+              </div>
+            </div>
+            <div class="clearfix"></div>
+          </div>
+          <div class="schooldetailsec">
+            <table id="tblData" class="table table-striped" cellpadding="2" cellspacing="0" border="0">
+
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <script src="js/custom.js"></script>
+
+</body>
+
+</html>

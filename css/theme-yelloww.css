@@ -1,0 +1,121 @@
+body {
+    background: #eaeaea;
+
+}
+
+.header, .navbar-default {
+    background-color: #ffa60e;
+}
+
+.navbar-brand span small {
+    color: #f1f1f1;
+}
+
+.navbar-default .navbar-nav > li > a, .navbar-default .navbar-text {
+    color: #e4e4e4;
+}
+
+.menuicon {
+    background: rgba(255, 255, 255, 0.18);
+}
+
+    .menuicon span {
+        background: #ffffff;
+    }
+
+nav.page-navigator .breadcrumb {
+    margin: 0px;
+    padding: 2px 15px;
+    border-radius: 0px;
+    background: rgba(255, 255, 255, 0.18);
+    position: relative;
+}
+
+    nav.page-navigator .breadcrumb:before {
+        border-color: transparent transparent rgba(255, 255, 255, 0.18) transparent;
+    }
+
+    nav.page-navigator .breadcrumb li a {
+        color: #cfe7ff;
+    }
+
+        nav.page-navigator .breadcrumb li a:hover, nav.page-navigator .breadcrumb li a:focus, .personal-info li a:hover, .personal-info li a:focus {
+            color: #ffa60e;
+        }
+
+.login-info h4 {
+    color: #5d5d5d;
+}
+
+.menu-content li a:hover, .menu-content li a:focus, .menu-content li a.active, .menu-content li.active a {
+    background: #ffa60e;
+}
+
+.menu-content li.active .sub-menu li a:hover, .menu-content li.active .sub-menu li a:focus, .menu-content li.active .sub-menu li.active a {
+    color: #ffa60e;
+}
+
+.nav-tabs > li.active > a, .nav-tabs > li.active > a:focus, .nav-tabs > li.active > a:hover {
+    color: #ffa60e;
+    border-bottom: #ffa60e 4px solid;
+}
+
+.page-content {
+    border-top: 2px solid #ffd58d;
+}
+
+.navbar-default .navbar-nav.top-right-menu > li > a:focus, .navbar-default .navbar-nav.top-right-menu > li > a:hover {
+    color: #5d5d5d;
+    background-color: rgb(255, 182, 57);
+}
+
+.buttonlist a:hover, .buttonlist a:focus {
+    color: #ffa60e;
+    border-color: #ffa60e;
+}
+
+.indicatorslist a {
+    border: 1px solid #fddea8;
+    color: #fdbd51;
+}
+
+    .indicatorslist a:hover, .indicatorslist a:focus {
+        color: #ffa60e;
+        border-color: #ffa60e;
+    }
+
+.pagination > .active > a, .pagination > .active > a:focus, .pagination > .active > a:hover, .pagination > .active > span, .pagination > .active > span:focus, .pagination > .active > span:hover {
+    color: #fff;
+    background-color: #ffa60e;
+    border-color: #ffa60e;
+}
+
+.form-control:focus {
+    border-color: #ffa60e;
+    box-shadow: none;
+}
+
+.setting-btn {
+    background: #ffa60e;
+}
+
+.settingbody {
+    border-left: 4px solid #ffa60e;
+}
+#sidebar-wrapper, .menu-content {
+    background: #fff;
+}
+
+    .menu-content li a {
+        color: #313131;
+    }
+
+.modal-content {
+    border: 3px solid #ffa60e;
+}
+.personal-info ul a {
+    color: #5a5a5a;
+}
+.personal-info ul {
+    border-bottom: 1px solid #c1c1c1;
+}

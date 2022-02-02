@@ -1,0 +1,208 @@
+a {
+    color: #d32f2f;
+}
+a:focus, a:hover {
+	color: #000000;
+	}
+.header {
+  
+border-top: 2px solid #dc5959;
+}
+.header .navbar-default {
+    background: #d32f2f;
+}
+.header .logo h1 {
+   
+color: #fff;
+}
+.menubtn {
+   
+background: rgba(255, 255, 255, 0.2);
+}.header .navbar-nav li a {
+   
+background: #d32f2f;   
+color: #d4d4d4;
+}
+.header .navbar-nav li a:hover, .header .navbar-nav li a:focus {
+    background: rgba(255, 255, 255, 0.2);
+    color: #b1b1b1;
+}
+.header .logo h1 small {
+    
+color: #dadada;
+}
+.setting-btn {
+   
+background: #d32f2f;
+}.settingbody {
+   
+border-left: 4px solid #d32f2f;
+}.page-container:after {
+   
+background: #d32f2f;
+   
+border-top: 1px solid #dc5959;
+}
+.sidemenu {
+   
+background: #2b2d35;
+   
+box-shadow: 0px 4px 10px #2b2d35;
+}
+.header .breadcrumb li a {
+    color: #efefef;
+}
+.header .breadcrumb li a:hover {
+    color: #a2a2a2;
+}
+.sidemenu .profile-details {
+  
+background: #2b2d35;
+}
+.sidemenu .profile-details h4 {
+    color: #c1c1c1;
+}
+.sidemenu .profile-details span {
+   
+color: #ffffff;
+}
+.sidemenu .profile-menu {
+   
+background: #383940;
+}
+.profile-menu ul li a {
+  
+color: #b7b7b7;
+}
+.profile-menu ul li a:hover, .profile-menu ul li a:focus {
+    color: #dc5959;
+    background: none;
+}
+.side-nav-list>li>a {
+   
+background-color: #2b2d35;
+   
+color: #b7b7b7;
+   
+border-left: 3px solid #2b2d35;
+}
+.side-nav-list>li>a:hover {
+    color: #dc5959;
+}
+
+.side-nav-list>li.active>a, .side-nav-list>li.active>a:hover, .side-nav-list>li.active>a:focus, .side-nav-list>li.active>a:active {
+    background-color: #d32f2f;
+    color: #ffffff;
+}
+.side-nav-list>li.active a {
+    border-left: 3px solid #dc5959;
+}.header .breadcrumb {
+  
+background: rgb(220, 89, 89);
+}
+.header .breadcrumb:before {
+   
+border-color: transparent transparent rgba(255, 255, 255, 0.2)transparent;
+}
+.header .breadcrumb li.active{
+    color: #c7c7c7;
+}
+.breadcrumb>li+li:before {
+   
+color: #c7c7c7;
+}
+.side-nav-list>li .submenu {
+   
+background-color: #383940;
+}
+.side-nav-list>li.active .submenu{box-shadow: none;}
+.side-nav-list>li .submenu>li>a {
+   
+color: #ababab;
+}
+.side-nav-list>li .submenu>li>a:hover {
+     color: #dc5959;
+}
+.side-nav-list>li .submenu>li.active>a {
+    color: #dc5959;
+}
+.formpage .panel {
+   
+box-shadow: 0px 0px 10px #dadada;
+}
+.nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
+    color: #d32f2f;
+    border-bottom: 4px solid #d32f2f!important;
+}
+.pagination > .active > a, .pagination > .active > span, .pagination > .active > a:hover, .pagination > .active > span:hover, .pagination > .active > a:focus, .pagination > .active > span:focus {
+   
+color: #ffffff;
+   
+background-color: #f8a900;
+   
+border-color: #f8a900;
+}
+legend {
+  
+color: #2b2d35;
+}
+.search-sec {
+   
+background: #ffefef;
+   
+border-bottom: 3px solid #ff8282;
+}
+.searchopen {
+  
+background: #fbcf73;
+  
+color: #ffffff;
+  
+border: 1px solid #ff8282;
+  
+color: #928989;
+}
+.searchopen:hover {
+    background: #ef5252;
+    color: #fff;
+}
+.indicatorslist a:hover {
+    color: #d32f2f;
+    border: 1px solid #d32f2f;
+}
+.header .navbar-nav li .dropdown-menu .notifications li a:hover, .header .navbar-nav li .dropdown-menu .notifications li a:focus {
+    color: #d32f2f;
+}
+.nav-tabs > li.active > a, .nav-tabs > li > a:hover {
+   
+color: #d32f2f!important;
+   
+border-bottom: 4px solid #d32f2f!important;
+}
+.nav-tabs > li > a::after {
+   
+background: #d32f2f;
+}
+.playerprofile img {
+    
+border: 2px solid #d32f2f;
+}
+.side-nav-list>li.arrow-up:after {
+    border-right: 1px solid #fff;
+    border-bottom: 1px solid #fff;
+}
+.formpage .accorodion-panel {
+	box-shadow: none;}
+.acivements .acivelist{
+    
+    border-left: 2px solid #d32f2f;
+}
+.acivements .acivelist .icondiv{
+   
+    color: #d32f2f;
+}
+.activement-card .details a {
+  
+    background: #d32f2f;
+  
+}

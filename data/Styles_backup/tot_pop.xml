@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<StyledLayerDescriptor version="1.0.0"
+  xsi:schemaLocation="http://www.opengis.net/sld http://schemas.opengis.net/sld/1.0.0/StyledLayerDescriptor.xsd"
+  xmlns="http://www.opengis.net/sld" xmlns:ogc="http://www.opengis.net/ogc"
+  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <NamedLayer>
+    <Name>Total population</Name>
+    <UserStyle>
+      <Title></Title>
+      <FeatureTypeStyle>
+        
+        <Rule>
+          <Name>first</Name>
+          <Title>0</Title>
+          <MaxScaleDenominator>10000000</MaxScaleDenominator>
+          <ogc:Filter>
+            <ogc:And>
+              <ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyName>b15to19</ogc:PropertyName>
+                <ogc:Literal>0</ogc:Literal>
+              </ogc:PropertyIsGreaterThanOrEqualTo>
+              <ogc:PropertyIsLessThanOrEqualTo>
+                <ogc:PropertyName>b15to19</ogc:PropertyName>
+                <ogc:Literal>0</ogc:Literal>
+              </ogc:PropertyIsLessThanOrEqualTo>
+            </ogc:And>
+          </ogc:Filter>
+          <PolygonSymbolizer>
+            <Fill>
+              <CssParameter name="fill">#ffffe6</CssParameter>
+            </Fill>
+            <Stroke>
+              <CssParameter name="stroke">#000000</CssParameter>
+           		<CssParameter name="stroke-width">0.3</CssParameter>
+            </Stroke>
+          </PolygonSymbolizer>
+        </Rule>
+        
+        <Rule>
+          <Name>second</Name>
+          <Title>1249 to 7559</Title>
+          <MaxScaleDenominator>10000000</MaxScaleDenominator>
+          <ogc:Filter>
+            <ogc:And>
+              <ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyName>b15to19</ogc:PropertyName>
+                <ogc:Literal>0</ogc:Literal>
+              </ogc:PropertyIsGreaterThanOrEqualTo>
+              <ogc:PropertyIsLessThanOrEqualTo>
+                <ogc:PropertyName>b15to19</ogc:PropertyName>
+                <ogc:Literal>7559</ogc:Literal>
+              </ogc:PropertyIsLessThanOrEqualTo>
+            </ogc:And>
+          </ogc:Filter>
+          <PolygonSymbolizer>
+            <Fill>
+              <CssParameter name="fill">#ffffb3</CssParameter>
+            </Fill>
+            <Stroke>
+              <CssParameter name="stroke">#000000</CssParameter>
+           		<CssParameter name="stroke-width">0.3</CssParameter>
+            </Stroke>
+          </PolygonSymbolizer>
+        </Rule>
+        
+        <Rule>
+          <Name>third</Name>
+          <Title>7566 to 12557</Title>
+          <MaxScaleDenominator>10000000</MaxScaleDenominator>
+          <ogc:Filter>
+            <ogc:And>
+              <ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyName>b15to19</ogc:PropertyName>
+                <ogc:Literal>7566</ogc:Literal>
+              </ogc:PropertyIsGreaterThanOrEqualTo>
+              <ogc:PropertyIsLessThanOrEqualTo>
+                <ogc:PropertyName>b15to19</ogc:PropertyName>
+                <ogc:Literal>12557</ogc:Literal>
+              </ogc:PropertyIsLessThanOrEqualTo>
+            </ogc:And>
+          </ogc:Filter>
+          <PolygonSymbolizer>
+            <Fill>
+              <CssParameter name="fill">#ffff80</CssParameter>
+            </Fill>
+            <Stroke>
+              <CssParameter name="stroke">#000000</CssParameter>
+           		<CssParameter name="stroke-width">0.3</CssParameter>
+            </Stroke>
+          </PolygonSymbolizer>
+        </Rule>
+        
+        <Rule>
+          <Name>fourth</Name>
+          <Title>12560 to 18418</Title>
+          <MaxScaleDenominator>10000000</MaxScaleDenominator>
+          <ogc:Filter>
+            <ogc:And>
+              <ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyName>b15to19</ogc:PropertyName>
+                <ogc:Literal>12560</ogc:Literal>
+              </ogc:PropertyIsGreaterThanOrEqualTo>
+              <ogc:PropertyIsLessThanOrEqualTo>
+                <ogc:PropertyName>b15to19</ogc:PropertyName>
+                <ogc:Literal>18418</ogc:Literal>
+              </ogc:PropertyIsLessThanOrEqualTo>
+            </ogc:And>
+          </ogc:Filter>
+          <PolygonSymbolizer>
+            <Fill>
+              <CssParameter name="fill">#ffff4d</CssParameter>
+            </Fill>
+            <Stroke>
+              <CssParameter name="stroke">#000000</CssParameter>
+           		<CssParameter name="stroke-width">0.3</CssParameter>
+            </Stroke>
+          </PolygonSymbolizer>
+        </Rule>
+        
+        <Rule>
+          <Name>fifth</Name>
+          <Title>18424 to 65580</Title>
+          <MaxScaleDenominator>10000000</MaxScaleDenominator>
+          <ogc:Filter>
+            <ogc:And>
+              <ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyName>b15to19</ogc:PropertyName>
+                <ogc:Literal>18424</ogc:Literal>
+              </ogc:PropertyIsGreaterThanOrEqualTo>
+              <ogc:PropertyIsLessThanOrEqualTo>
+                <ogc:PropertyName>b15to19</ogc:PropertyName>
+                <ogc:Literal>65580</ogc:Literal>
+              </ogc:PropertyIsLessThanOrEqualTo>
+            </ogc:And>
+          </ogc:Filter>
+          <PolygonSymbolizer>
+            <Fill>
+              <CssParameter name="fill">#ffff1a</CssParameter>
+            </Fill>
+            <Stroke>
+              <CssParameter name="stroke">#000000</CssParameter>
+           		<CssParameter name="stroke-width">0.3</CssParameter>
+            </Stroke>
+          </PolygonSymbolizer>
+        </Rule>
+        
+       
+        
+        <Rule>
+          <Name>label1</Name>
+     		<MinScaleDenominator>500000</MinScaleDenominator>
+          <MaxScaleDenominator>1000000</MaxScaleDenominator>
+          <PolygonSymbolizer>
+            <Stroke>
+              <CssParameter name="stroke">#000000</CssParameter>
+           		<CssParameter name="stroke-width">0.3</CssParameter>
+            </Stroke>
+          </PolygonSymbolizer>
+          <TextSymbolizer>
+            <Font>
+              	<CssParameter name="font-family">Arial</CssParameter>
+            	<CssParameter name="font-size">12</CssParameter>
+           		<CssParameter name="font-weight">bold</CssParameter>
+            </Font>
+             <Label>
+           		<ogc:PropertyName>w_name</ogc:PropertyName>
+             </Label>
+             <Halo>
+           		<Radius>1</Radius>
+         		<Fill>
+           			<CssParameter name="fill">#000000</CssParameter>
+         		</Fill>
+            </Halo>
+             <Fill>
+           		<CssParameter name="fill">#ffffff</CssParameter>
+         	</Fill>
+            <VendorOption name="autoWrap">60</VendorOption>
+         	<VendorOption name="maxDisplacement">150</VendorOption>  
+          </TextSymbolizer>
+        </Rule>
+        
+        <Rule>
+          <Name>label2</Name>
+     		<MaxScaleDenominator>500000</MaxScaleDenominator>
+          <PolygonSymbolizer>
+            <Stroke>
+              <CssParameter name="stroke">#000000</CssParameter>
+           		<CssParameter name="stroke-width">0.3</CssParameter>
+            </Stroke>
+          </PolygonSymbolizer>
+          <TextSymbolizer>
+            <Font>
+              	<CssParameter name="font-family">Arial</CssParameter>
+            	<CssParameter name="font-size">20</CssParameter>
+           		<CssParameter name="font-weight">bold</CssParameter>
+            </Font>
+             <Label>
+           		<ogc:PropertyName>w_name</ogc:PropertyName>
+             </Label>
+             <Halo>
+           		<Radius>1</Radius>
+         		<Fill>
+           			<CssParameter name="fill">#000000</CssParameter>
+         		</Fill>
+            </Halo>
+             <Fill>
+           		<CssParameter name="fill">#ffffff</CssParameter>
+         	</Fill>
+            <VendorOption name="autoWrap">60</VendorOption>
+         	<VendorOption name="maxDisplacement">150</VendorOption>  
+          </TextSymbolizer>
+        </Rule>  
+        
+        
+      </FeatureTypeStyle>
+    </UserStyle>
+  </NamedLayer>
+</StyledLayerDescriptor>

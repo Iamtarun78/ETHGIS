@@ -1,0 +1,211 @@
+a {
+    color: #f8a900;
+}
+a:focus, a:hover {
+	color: #000000;
+	}
+.header {
+  
+border-top: 2px solid #f8a900;
+}
+.header .navbar-default {
+    background: #24262d;
+}
+.menubtn {
+   
+background: #f8a900;
+}.header .navbar-nav li a {
+   
+background: #24262d;   
+color: #e2e2e1;
+}
+.header .navbar-nav li a:hover, .header .navbar-nav li a:focus {
+    background: rgb(51, 53, 60);
+    color: #f3f3f3;
+}
+.header .logo h1 small {
+    
+color: #ffe09d;
+}
+.setting-btn {
+   
+background: #f8a900;
+}.settingbody {
+   
+border-left: 4px solid #f8a900;
+}.page-container:after {
+   
+background: #24262d;
+   
+border-top: 1px solid #33353c;
+}
+.sidemenu {
+   
+background: #ffffff;
+   
+box-shadow: 0px 4px 10px #888888;
+}
+.header .breadcrumb li a {
+    color: #f8a900;
+}
+.header .breadcrumb li a:hover {
+    color: #a2a2a2;
+}
+.sidemenu .profile-details {
+  
+    background: #ffffff;
+}
+.sidemenu .profile-details h4 {
+    color: #6d6d6d;
+   
+}
+.sidemenu .profile-details span {
+   
+color: #000000;
+}
+.sidemenu .profile-menu {
+   
+    background: #ececec;
+}
+.profile-menu ul li a {
+  
+    color:#2f2f2f;
+}
+.profile-menu ul li a:hover, .profile-menu ul li a:focus {
+    color: #f8a900;
+    background: none;
+}
+.side-nav-list>li>a {
+   
+    background-color: #ffffff;
+    color: #2f2f2f;
+    border-left: 3px solid #ffffff;
+    
+}
+.side-nav-list>li>a:hover {
+    color: #f8a900;
+}
+.side-nav-list>li.active>a, .side-nav-list>li.active>a:hover, .side-nav-list>li.active>a:focus, .side-nav-list>li.active>a:active {
+    background-color: #f8a900;
+    color: #000000;
+}
+.header .breadcrumb li.active {
+    color: #c7c7c7;
+}
+.breadcrumb>li+li:before {
+   
+    color: #c7c7c7;
+ 
+}
+.side-nav-list>li.active a {
+    border-left: 3px solid #ffae00;
+}.header .breadcrumb {
+  
+background: rgb(51, 53, 60);
+}
+.header .breadcrumb:before {
+   
+border-color: transparent transparent rgb(51, 53, 60) transparent;
+}
+.side-nav-list>li .submenu {
+   
+background-color: #fbfbfb;
+}
+.side-nav-list>li.active .submenu{box-shadow: none;}
+.side-nav-list>li .submenu>li>a {
+   
+    color: #4a4a4a;
+  
+}
+.side-nav-list>li .submenu>li>a:hover {
+     color: #f8a900;
+}
+.side-nav-list>li .submenu>li.active>a {
+    color: #f8a900;
+}
+.formpage .panel {
+   
+box-shadow: 0px 0px 10px #909090;
+}
+.nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
+    color: #f8a900;
+    border-bottom: 4px solid #f8a900!important;
+}
+.pagination > .active > a, .pagination > .active > span, .pagination > .active > a:hover, .pagination > .active > span:hover, .pagination > .active > a:focus, .pagination > .active > span:focus {
+   
+color: #ffffff;
+   
+background-color: #f8a900;
+   
+border-color: #f8a900;
+}
+legend {
+  
+color: #24262d;
+}
+.search-sec {
+   
+background: #fff5e0;
+   
+border-bottom: 3px solid #fbcf73;
+}
+.searchopen {
+  
+background: #fbcf73;
+  
+color: #000000;
+  
+border: 1px solid #fbcf73;
+}
+.searchopen:hover {
+    background: #f8a900;
+    color: #000;
+}
+.indicatorslist a:hover {
+    color: #f8a900;
+    border: 1px solid #f8a900;
+}
+.header .navbar-nav li .dropdown-menu .notifications li a:hover, .header .navbar-nav li .dropdown-menu .notifications li a:focus {
+    color: #d32f2f;
+}
+.nav-tabs > li.active > a, .nav-tabs > li > a:hover {
+   
+color: #f8a900!important;
+   
+border-bottom: 4px solid #f8a900!important;
+}
+.nav-tabs > li > a::after {
+   
+background: #f8a900;
+}
+.playerprofile img {
+    
+border: 2px solid #f8a900;
+}
+.formpage .accorodion-panel {
+	box-shadow: none;}
+.sidemenu .profile-details.active .designation, .sidemenu .profile-details.active .location {
+   
+    color: #717171;
+    background: rgba(0, 0, 0, 0);
+   
+}
+.side-nav-list>li.arrow-up:after {
+   
+    border-right: 1px solid #000;
+    border-bottom: 1px solid #000;
+   
+}
+.acivements .acivelist{
+    
+    border-left: 2px solid #f8a900;
+}
+.acivements .acivelist .icondiv{
+   
+    color: #f8a900;
+}
+.activement-card .details a {
+  
+    background: #f8a900;
+  
+}

@@ -1,0 +1,127 @@
+
+body {
+    background: #eaeaea;
+}
+
+.header, .navbar-default {
+    background-color: #1976d2;
+}
+
+    .navbar-default .navbar-nav > li > a, .navbar-default .navbar-text {
+        color: #e4e4e4;
+    }
+#sidebar-wrapper {
+    background: #2d2d2d;
+}
+
+.menuicon {
+    background: rgba(255, 255, 255, 0.18);
+}
+
+    .menuicon span {
+        background: #ffffff;
+    }
+
+nav.page-navigator .breadcrumb {
+    margin: 0px;
+    padding: 2px 15px;
+    border-radius: 0px;
+    background: rgba(255, 255, 255, 0.18);
+    position: relative;
+}
+
+    nav.page-navigator .breadcrumb:before {
+        border-color: transparent transparent rgba(255, 255, 255, 0.18) transparent;
+    }
+
+    nav.page-navigator .breadcrumb li a {
+        color: #cfe7ff;
+    }
+
+.menu-content li.active .sub-menu li a {
+    color: #9e9e9e;
+}
+
+nav.page-navigator .breadcrumb li a:hover, nav.page-navigator .breadcrumb li a:focus, .personal-info li a:hover, .personal-info li a:focus {
+    color: #428fda;
+}
+
+.login-info h4 {
+    color: #d2d2d2;
+}
+
+.menu-content {
+    background: #2d2d2d;
+}
+
+    .menu-content li a {
+        color: #dcdcdc;
+    }
+
+.personal-info ul {
+    border-bottom: 1px solid #525252;
+}
+    .personal-info ul a {
+        color: #fff;
+    }
+
+
+.menu-content li a:hover, .menu-content li a:focus, .menu-content li a.active, .menu-content li.active a {
+    background: #1976d2;
+}
+
+.menu-content li.active .sub-menu li a:hover, .menu-content li.active .sub-menu li a:focus, .menu-content li.active .sub-menu li.active a {
+    color: #499cec;
+}
+
+.nav-tabs > li.active > a, .nav-tabs > li.active > a:focus, .nav-tabs > li.active > a:hover {
+    color: #428fda;
+    border-bottom: #428fda 4px solid;
+}
+
+.page-content {
+    border-top: 2px solid #56abff;
+}
+
+.navbar-default .navbar-nav.top-right-menu > li > a:focus, .navbar-default .navbar-nav.top-right-menu > li > a:hover {
+    color: #fbf7f1;
+    background-color: rgb(66, 143, 218);
+}
+
+.buttonlist a:hover, .buttonlist a:focus {
+    color: #1976d2;
+    border-color: #1976d2;
+}
+
+.indicatorslist a {
+    border: 1px solid #b0d8ff;
+    color: #51a2f1;
+}
+
+    .indicatorslist a:hover, .indicatorslist a:focus {
+        color: #1976d2;
+        border-color: #1976d2;
+    }
+
+.pagination > .active > a, .pagination > .active > a:focus, .pagination > .active > a:hover, .pagination > .active > span, .pagination > .active > span:focus, .pagination > .active > span:hover {
+    color: #fff;
+    background-color: #1976d2;
+    border-color: #1976d2;
+}
+
+.form-control:focus {
+    border-color: #428bd4;
+    box-shadow: none;
+}
+
+.setting-btn {
+    background: #2d2d2d;
+}
+
+.settingbody {
+    border-left: 4px solid #2d2d2d;
+}
+.modal-content {
+    border: 3px solid #1976d2;
+   
+}

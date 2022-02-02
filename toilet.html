@@ -1,0 +1,1949 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+   <meta charset="utf-8" />
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>World Bank School Mapping and Analysis</title>
+   <meta name="keywords" content="ADSYS" />
+   <meta name="description" content="ADSYS" />
+   <!-- <link rel="shortcut icon" href="javascript:void(0);" type="image/x-icon"> -->
+   <link href="css/bootstrap.min.css" rel="stylesheet">
+   <link href="css/font-awesome.min.css" rel="stylesheet">
+   <link href="css/animate.css" rel="stylesheet">
+   <link href="css/jquery.mCustomScrollbar.min.css" rel="stylesheet">
+   <link href="css/icons.css" rel="stylesheet">
+   <link href="css/site.css" rel="stylesheet">
+
+   <script src="js/jquery-2.1.1.js"></script>
+   <script src="js/bootstrap.min.js"></script>
+   <script src="js/bootstrap-datepicker.min.js"></script>
+   <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
+
+   <!-- Include Openlayers API -->
+   <link rel="stylesheet" href="https://openlayers.org/en/v4.6.5/css/ol.css" type="text/css">
+   <link rel="stylesheet" href="https://unpkg.com/ol-popup@4.0.0/src/ol-popup.css" />
+   <!-- The line below is only needed for old environments like Internet Explorer and Android 4.x -->
+   <script
+      src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
+
+   <script src="https://openlayers.org/en/v4.6.5/build/ol.js"></script>
+   <script src="https://unpkg.com/ol-popup@4.0.0"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.2.61/jspdf.min.js"></script>
+   <!-- Select2 CSS -->
+   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+   <!-- Select2 JS -->
+   <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"></script>
+   <style>
+      /* The pdf-modal (background) */
+      .pdf-modal {
+         display: none;
+         /* Hidden by default */
+         position: fixed;
+         /* Stay in place */
+         z-index: 10;
+         /* Sit on top */
+         padding-top: 100px;
+         /* Location of the box */
+         left: 0;
+         top: 0;
+         width: 100%;
+         /* Full width */
+         height: 100%;
+         /* Full height */
+         overflow: auto;
+         /* Enable scroll if needed */
+         background-color: rgb(0, 0, 0);
+         /* Fallback color */
+         background-color: rgba(0, 0, 0, 0.4);
+         /* Black w/ opacity */
+      }
+
+      /* pdf-modal Content */
+      .pdf-modal-content {
+         background-color: rgb(230, 230, 230);
+         margin: auto;
+         border: 1px solid #888;
+         width: 793px;
+         border-radius: 5px;
+         /* width:793px */
+      }
+
+      #pdfMap {
+         width: 793px;
+         height: 450px;
+         padding: 10px;
+      }
+
+
+
+      .pdfFooter {
+         background-color: rgb(220, 220, 220);
+         /* text-align: right; */
+         padding: 10px;
+         border-radius: 5px;
+         display: flex;
+         justify-content: space-between;
+      }
+
+      .previewTitle {
+         background-color: #0F47AF;
+         padding: 10px;
+         font-size: 2.5rem;
+         color: #f7f1f1;
+         border-radius: 5px;
+         border: solid #f7f1f1 1px;
+      }
+
+      #savePdf {
+         padding: 10px;
+         border-radius: 5px;
+         background-color: #0F47AF;
+         color: white;
+         border: none;
+      }
+
+      #cancelPdf {
+         padding: 10px 20px;
+         border-radius: 5px;
+         background-color: rgb(243, 243, 243);
+         border: none;
+      }
+
+      #savePdf:hover {
+         cursor: pointer;
+         box-shadow: 0px 0px 5px gray;
+      }
+
+      #cancelPdf:hover {
+         cursor: pointer;
+         background-color: rgb(228, 228, 228);
+         box-shadow: 0px 0px 10px rgb(116, 112, 112);
+      }
+
+      /* The Close Button */
+      .closepdf {
+         color: rgb(243, 243, 243);
+         font-size: 28px;
+         font-weight: bold;
+         float: right;
+         margin-top: -0.3rem;
+      }
+
+      .closepdf:hover,
+      .closepdf:focus {
+         color: #000;
+         text-decoration: none;
+         cursor: pointer;
+      }
+
+      .map {
+         height: 550px;
+         width: 100%;
+         position: relative;
+      }
+
+      .header-right .row {
+         margin: 10px 0px;
+
+      }
+
+      .header-right {
+         margin-right: 20px;
+      }
+
+      .header-right .row .searchIconm {
+         padding: 5px;
+         display: block;
+         width: 35px;
+         background-color: rgb(15, 15, 94)
+      }
+
+      .col-md-10,
+      .col-md-2 {
+         padding: 0px !important;
+      }
+
+      .ol-popup-content {
+         overflow: hidden !important;
+      }
+
+      .tooltip {
+         position: relative;
+         background: rgba(0, 0, 0, 0.5);
+         border-radius: 4px;
+         color: white;
+         padding: 4px 8px;
+         opacity: 0.7;
+         white-space: nowrap;
+      }
+
+      .tooltip-measure {
+         opacity: 1;
+         font-weight: bold;
+      }
+
+      .tooltip-static {
+         background-color: #ffcc33;
+         color: black;
+         border: 1px solid white;
+      }
+
+      .tooltip-measure:before,
+      .tooltip-static:before {
+         border-top: 6px solid rgba(0, 0, 0, 0.5);
+         border-right: 6px solid transparent;
+         border-left: 6px solid transparent;
+         content: "";
+         position: absolute;
+         bottom: -6px;
+         margin-left: -7px;
+         left: 50%;
+      }
+
+      .tooltip-static:before {
+         border-top-color: #ffcc33;
+      }
+
+      .floatingArea {
+         display: none;
+      }
+
+      /* .floatingArea li a span {} */
+
+      .floatingArea li a span img {
+         width: 65px;
+         height: 45px;
+         overflow: hidden;
+         padding-right: 10px;
+      }
+
+      .floatingArea ul li a {
+         height: auto;
+         padding: 8px 4px 10px 8px;
+      }
+
+      .floatingArea a.closIcon {
+         top: 0px;
+      }
+
+      .modal-header {
+         background: #0c4475;
+      }
+
+      .modal-title {
+         color: #fff;
+      }
+
+      #cstTab .magic-radio+label:before,
+      #cstTab .magic-checkbox+label:before {
+         right: 7px;
+         top: 3px;
+         left: auto;
+      }
+
+      #cstTab .magic-radio+label:not(:empty),
+      #cstTab .magic-radio+label:not(:empty),
+      #cstTab .magic-checkbox+label:not(:empty) {
+         margin: 0 2px 5px 1px;
+         text-indent: 12px;
+         font-size: .9em;
+      }
+
+      #cstTab .magic-checkbox+label:after {
+         border-color: #fff;
+         border-style: solid;
+         border-width: 0 2px 2px 0;
+         box-sizing: border-box;
+         height: 13px;
+         left: auto;
+         right: 12px;
+         top: 3px;
+         transform: rotate(48deg);
+         width: 6px;
+      }
+
+      #cstTab .magic-radio:checked+label:after,
+      #cstTab .magic-checkbox:checked+label:after {
+         display: block;
+      }
+
+
+      .contentblock {
+         height: 140px;
+         overflow-y: auto;
+      }
+
+      .contentblock::-webkit-scrollbar {
+         width: 7px;
+      }
+
+      /* Track */
+      .contentblock::-webkit-scrollbar-track {
+         background: #f1f1f1;
+      }
+
+      /* Handle */
+      .contentblock::-webkit-scrollbar-thumb {
+         background: #888;
+      }
+
+      /* Handle on hover */
+      .contentblock::-webkit-scrollbar-thumb:hover {
+         background: #555;
+      }
+
+      /*#cstTab input[type=checkbox], #cstTab input[type=radio] {    margin: 6px 7px 0 7px; display: inline-block;}*/
+   </style>
+   <!-- Openlayers API Scripts End -->
+
+</head>
+
+<body>
+   <div id="loaderPage">
+      <img src="images/loader.gif" alt="Odisha Govt. Logo" />
+   </div>
+   <!--===Header===-->
+   <div class="print-header">
+
+      <h1>WB-ET-School Mapping <small>Government of Ethiopia</small></h1>
+      <div class="clrboth"></div>
+   </div>
+   <div class="header">
+      <nav class="navbar navbar-default">
+         <!-- Brand and toggle get grouped for better mobile display -->
+         <div class="navbar-header">
+            <div class="logo-sec">
+               <div class="logo">
+                  <img src="images/etgovlogo.png" alt="Odisha Govt. Logo" />
+                  <h1>ETH School Mapping<small>Government of Ethiopia</small></h1>
+               </div>
+               <div id="toggle" class="menubtn">
+                  <div class="one"></div>
+                  <div class="two"></div>
+                  <div class="three"></div>
+               </div>
+            </div>
+         </div>
+
+         <ul class="nav navbar-nav navbar-left">
+            <li></li>
+            <li>
+               <a href="javascript:void(0);" data-toggle="dropdown" class="dropdown-toggle">Report <span
+                     class="caret"></span>
+               </a>
+               <ul class="dropdown-menu" id="cstTab">
+                  <li>
+                     <a href="index.html" title="" name="disSchool" id="linkIndex">Distribution of Schools
+                     </a>
+                  </li>
+                  <li>
+                     <a href="buffer.html" title="" name="disSchool" id="linkBuffer">Schools’ Buffer Analysis</a>
+                  </li>
+                  <li>
+                     <a href="toilet.html" title="" name="toiletFaci" id="linkToilet">Schools Having Toilet
+                        Facilities</a>
+                  </li>
+                  <li>
+                     <a href="sector.html" title="" name="schoolSec" id="linkSector">View Schools by Grade</a>
+                  </li>
+                  <li>
+                     <a href="analysis.html" title="" id="linkAnalysis" name="schPotentAnalysis">Identification of
+                        Potential School Sites</a>
+                  </li>
+               </ul>
+            </li>
+
+            <!-- <li><a href="javascript:void(0);" title="">3D <span class="caret"></span>  </a></li> -->
+            <li><a href="javascript:void(0);" title="" data-toggle="modal" data-target="#aboutconten">About </a></li>
+         </ul>
+         <div class="pull-right header-right m-l-10">
+
+         </div>
+         <ul class="nav navbar-nav navbar-right">
+            <!--Option menu for viewing eth zone and roas-->
+            <li>
+               <a href="javascript:void(0);" id="layerClick" class="dropdown-toggle " title="View Object"><img
+                     src="images/layer.png" alt="Full Screen icon"></i>
+               </a>
+               <ul class="dropdown-menu myMenu" id="cstTab">
+                  <!--- <li>
+                     <input type="checkbox" class="magic-checkbox" id="boundary" value="Ethopia boundaries"> <label
+                        for="boundary">Zone boundaries </label>
+                  </li> -->
+                  <li> <input type="checkbox" class="magic-checkbox" id="electricline" value="Ethopia electric lines">
+                     <label for="electricline">Ethiopia Electric lines </label>
+                  </li>
+
+                  <li>
+                     <input type="checkbox" class="magic-checkbox" id="road" value="Ethopia roads"> <label
+                        for="road">Ethopia roads </label>
+                  </li>
+                  <!-- <li>
+                     <input type="checkbox" class="magic-checkbox" id="pvt_svt" value="Poverty_Severty"> <label
+                        for="pvt_svt">Poverty Severity </label>
+                  </li> -->
+               </ul>
+            </li>
+
+
+            <li>
+               <a href="javascript:void(0);" data-toggle="tooltip" data-placement="bottom" title="Measurment"
+                  id="draw"><img src="images/meserment.png" alt="Meserment  icon" />
+               </a>
+            </li>
+            <li>
+               <a href="javascript:void(0);" data-toggle="tooltip" data-placement="bottom" title="Rotate Map"
+                  id="rotate"><img src="images/rotate-map.png" alt="Rotate Map icon" />
+               </a>
+            </li>
+            <li>
+               <a href="javascript:void(0);" data-toggle="tooltip" data-placement="bottom" title="Home" id="home"><img
+                     src="images/home.png" alt="Plus icon" />
+               </a>
+            </li>
+            <!-- <li>
+            <a
+              href="javascript:void(0);"
+              data-toggle="tooltip"
+              data-placement="bottom"
+              title="ZoomIn"
+              ><img src="images/plus.png" alt="Plus icon" />
+            </a>
+          </li>
+          <li>
+            <a
+              href="javascript:void(0);"
+              data-toggle="tooltip"
+              data-placement="bottom"
+              title="ZoomOut"
+              id="zoomMinus"
+              ><img src="images/minus.png" alt="Minus icon" />
+            </a>
+          </li> -->
+            <li>
+               <a href="javascript:void(0);" data-toggle="tooltip" data-placement="bottom" title="Full Screen"
+                  id="fullScrn"><img src="images/full-screen.png" alt="Full Screen icon" />
+               </a>
+            </li>
+            <li>
+               <a href="javascript:void(0);" data-toggle="tooltip" data-placement="bottom" title="Basemap"
+                  id="mapimg"><img src="images/basemap.png" alt="Basemap icon" />
+               </a>
+            </li>
+            <li>
+               <a href="javascript:void(0);" data-toggle="tooltip" data-placement="bottom" title="Export to Excel"
+                  id="dvjson"><img src="images/excel.png" alt="Export to Excel icon" />
+               </a>
+            </li>
+            <li>
+               <a href="javascript:void(0);" data-toggle="tooltip" data-placement="bottom" title="Print PDF Map"
+                  id="printMap"><img src="images/pdf.png" alt="Print PDF Map icon" />
+               </a>
+            </li>
+         </ul>
+      </nav>
+   </div>
+   <!--===Header===-->
+   <!--===Page container===-->
+
+   <div class="page-container">
+      <!--===Side Menu===-->
+      <div class="sidemenu">
+         <div id="main-menu">
+            <h4>Schools having toilet facilities</h4>
+            <div class="nano-content" id="contAbCst">
+               <div id="disSchool" class="noDisplayds boxCst">
+                  <!-- Inline Checkboxes -->
+                  <div class="form-group">
+                     <label class="control-label" for="">Region Name</label>
+                     <select class="form-control" id="selRegion">
+                        <option value="">---Select Region---</option>
+                        <option value="2">Addis Ababa</option>
+                        <option value="3">Afar</option>
+                        <option value="4">Amhara</option>
+                        <option value="5">Benishangul-Gumuz</option>
+                        <option value="6">Dire Dawa</option>
+                        <option value="7">Gambella</option>
+                        <option value="8">Harari</option>
+                        <option value="9">Oromiya</option>
+                        <option value="10">SNNP</option>
+                        <option value="11">Somali</option>
+                        <option value="12">Tigray</option>
+                     </select>
+                  </div>
+                  <div class="form-group">
+                     <label class="control-label" for="">Zone Name</label>
+                     <select class="form-control" id="selZone">
+                        <option value="">---Select Zone---</option>
+
+                     </select>
+                  </div>
+                  <div class="form-group">
+                     <label class="control-label" for="">Woreda Name</label>
+                     <select class="form-control" id="selWorida">
+                        <option>---Select Worida---</option>
+
+                     </select>
+                  </div>
+               </div>
+               <div class="boxCst" id="schoolSec">
+                  <h4>Toilet Facilities</h4>
+
+                  <div class="checkbox">
+                     <!-- Inline Checkboxes -->
+                     <input id="checkbox1" class="magic-checkbox chkAll1" type="checkbox" value="1" checked>
+                     <label for="checkbox1"><i class="fa fa-circle-o" aria-hidden="true"
+                           style="color:#1f78b4;font-weight: bold;"></i>Combined toilets </label>
+                     <input id="checkbox2" class="magic-checkbox chkAll1" type="checkbox" value="2">
+                     <label for="checkbox2"><i class="fa fa-circle-o" aria-hidden="true"
+                           style="color:#38baff;font-weight: bold;"></i>Separate toilets</label>
+                     <input id="checkbox3" class="magic-checkbox chkAll1" type="checkbox" value="3">
+                     <label for="checkbox3"> <i class="fa fa-circle-o" aria-hidden="true"
+                           style="color:#e31a1c;font-weight: bold;"></i>Not having toilets</label>
+                  </div>
+               </div>
+
+
+               <!--<div class="boxCst noDisplayd" id="SeptoiletFaci">
+        <div class="checkbox">
+        <!-- Inline Checkboxes -- >
+            <input id="Checkbox6" class="magic-checkbox" type="checkbox" checked="">
+            <label for="demo-form-inline-checkbox">Primary</label>
+            <input id="Checkbox7" class="magic-checkbox" type="checkbox">
+            <label for="demo-form-inline-checkbox-3">Secondary</label>
+        </div>
+        </div>
+        <div class="boxCst noDisplayd" id="schoolAgewise">
+        <div class="checkbox">
+        <!-- Inline Checkboxes -- >
+            <input id="Checkbox8" class="magic-checkbox" type="checkbox" checked="">
+            <label for="demo-form-inline-checkbox">Age wise school reports</label>
+            
+        </div>
+        </div>-->
+            </div>
+         </div>
+      </div>
+      <!--===Side Menu===-->
+
+      <!--===form page===-->
+      <div class="formpage">
+         <div class="row">
+            <div class="col-md-12 col-sm-12">
+               <div class="panel panel-default">
+                  <!-- <div class="panel-heading">View School Details</div> -->
+
+                  <!-- BASIC FORM ELEMENTS -->
+                  <!--===================================================-->
+                  <div class="panel-body form-horizontal form-padding">
+                     <div class="floatingArea">
+                        <h3>BaseMap</h3>
+                        <a href="javascript:void(0);" title="Click here to close" class="closIcon" id="clsIcon"><i
+                              class="fa fa-close" aria-hidden="true" style="font-size: 17px;" id="clsIcon"></i></a>
+                        <ul class="fltMenu">
+                           <li>
+                              <a href="javascript:void(0);" title="" name="disSchool" id="liOpenMap"
+                                 class="mapType active">
+                                 <span><img src="images/openlayer.png"></span>Open Layer Map</a>
+                           </li>
+                           <li>
+                              <a href="javascript:void(0);" title="" name="disSchool" id="liBingMap"
+                                 class="mapType"><span><img src="images/bing_sat.png"></span>Google Map</a>
+                           </li>
+                           <!--<li>
+                                          <a href="javascript:void(0);" title="" name="disSchool" id="liBingRoadMap" class="mapType" ><span><img
+                                                src="images/bing_road.png"></span>Bing Road Map</a>
+                                        </li> -->
+
+                        </ul>
+                     </div>
+                     <div id="map" class="map"></div>
+
+                     <div style="display: none;">
+                        <!-- Clickable label for Vienna -->
+                        <a class="overlay" id="vienna" target="_blank"
+                           href="http://en.wikipedia.org/wiki/Vienna">Vienna</a>
+                        <div id="marker" title="Marker"></div>
+                        <!-- Popup -->
+                        <div id="popup" title="Welcome to OpenLayers"></div>
+                     </div>
+
+
+
+                  </div>
+                  <!--===================================================-->
+                  <!-- END BASIC FORM ELEMENTS -->
+                  <!--New elements added-->
+                  <div class="pvtsvtStatus" hidden="true" style="padding: 5px;">
+                     <label for="fa fa-square"><strong>Zone according to poverty and severity</strong></label><br>
+                     <span><i class="fa fa-square" aria-hidden="true" style="color:#808080;opacity:0.5"></i> less than
+                        0</span>
+                     <span><i class="fa fa-square" aria-hidden="true" style="color:#1a9b27;opacity:0.5"></i> 0 to
+                        0.005</span>
+                     <span><i class="fa fa-square" aria-hidden="true" style="color:#2ce047;opacity:0.5"></i> 0.005 to
+                        0.01</span>
+                     <span><i class="fa fa-square" aria-hidden="true" style="color:#ecf24b;opacity:0.5"></i> 0.01 to
+                        0.03</span>
+                     <span><i class="fa fa-square" aria-hidden="true" style="color:#ed9128;opacity:0.5"></i> 0.03 to
+                        0.06</span>
+                     <span><i class="fa fa-square" aria-hidden="true" style="color:#e02518;opacity:0.5"></i> More than
+                        0.06</span>
+                  </div>
+                  <!--New elements added-->
+
+               </div>
+            </div>
+         </div>
+      </div>
+
+      <!--===form page===-->
+   </div>
+   <!--===Page container===-->
+
+
+   <!-- Map Script -->
+   <script>
+
+      const Config_URL = "192.168.10.45";
+
+
+      $("#loaderPage").hide();
+
+      // const Config_URL = "203.193.144.116";
+
+
+      $('#printMap').show()
+      $('#dvjson').show()
+      function getUrlVars() {
+         var vars = [], hash;
+         var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+         for (var i = 0; i < hashes.length; i++) {
+            hash = hashes[i].split('=');
+            vars.push(hash[0]);
+            vars[hash[0]] = hash[1];
+         }
+         return vars;
+      }
+
+      var authId = getUrlVars()["username"];
+      if (authId == 'testuser1') {
+
+         $('#linkBuffer').attr('href', 'buffer.html?username=' + authId);
+         $('#linkIndex').attr('href', 'index.html?username=' + authId);
+         $('#linkToilet').attr('href', 'toilet.html?username=' + authId);
+         $('#linkSector').attr('href', 'sector.html?username=' + authId);
+         $('#linkAnalysis').attr('href', 'analysis.html?username=' + authId);
+      }
+
+
+
+
+      /*Layers And Source*/
+      //Base Layer and Sources
+      var satelliteSource = new ol.source.XYZ({
+         url: 'http://mt0.google.com/vt/lyrs=y&hl=en&x={x}&y={y}&z={z}'
+      });
+      var osmSource = new ol.source.OSM();
+
+      var baseLayer = new ol.layer.Tile({
+         source: osmSource
+      });
+
+
+      //Country Boundary Source And Layer
+      var boundarySource = new ol.source.ImageWMS({
+         url: "http://" + Config_URL + ":8080/geoserver/wms",
+         params: { 'LAYERS': 'ETH_SCHOOL:WBSMA_Boundary' },
+         serverType: "geoserver",
+         crossOrigin: 'anonymous'
+      });
+
+      var boundaryLayer = new ol.layer.Image({
+         source: boundarySource
+      });
+
+
+      /***************WMS Layer Of Toilet**********************/
+
+      var paramsCombineToilet = "is_toilet ='Yes' and is_s_tlt='No'";
+      var paramsNoToilet = "is_toilet ='No'";
+      var wmsSource = new ol.source.ImageWMS({
+         url: "http://" + Config_URL + ":8080/geoserver/wms",
+         params: { 'LAYERS': "ETH_SCHOOL:schools_by_toilet_final", "CQL_FILTER": paramsCombineToilet },
+         serverType: "geoserver",
+         crossOrigin: "anonymous"
+      });
+
+      var wmsLayer = new ol.layer.Image({
+         source: wmsSource
+      });
+
+      /***************Ethopia Road Layer**********************/
+      var eth_road = new ol.layer.Image({
+         source: new ol.source.ImageWMS({
+            url: "http://" + Config_URL + ":8080/geoserver/wms",
+            params: { LAYERS: "ETH_SCHOOL:eth_roads_2021" },
+            serverType: "geoserver",
+            crossOrigin: "anonymous"
+         })
+      });
+
+      /****************Ethopia Boundaries layer**************/
+      var eth_boundary = new ol.layer.Image({
+         source: new ol.source.ImageWMS({
+            url: "http://" + Config_URL + ":8080/geoserver/wms",
+            params: { LAYERS: "ETH_SCHOOL:eth_zone_boundary" },
+            serverType: "geoserver",
+            crossOrigin: "anonymous"
+         })
+      });
+      /****************Ethopia Pvt_svt layer**************/
+      var eth_pvt_svt = new ol.layer.Image({
+         source: new ol.source.ImageWMS({
+            url: "http://" + Config_URL + ":8080/geoserver/wms",
+            params: { LAYERS: "ETH_SCHOOL:eth_zone_severity" },
+            serverType: "geoserver",
+            crossOrigin: "anonymous"
+         })
+      });
+
+
+      var eth_electricline = new ol.layer.Image({
+         source: new ol.source.ImageWMS({
+            url: "http://" + Config_URL + ":8080/geoserver/wms",
+            params: { LAYERS: "	ETH_SCHOOL:eth_powerlines_2021" },
+            serverType: "geoserver",
+            crossOrigin: "anonymous"
+         })
+      })
+
+
+      var view = new ol.View({
+         center: ol.proj.transform([38.763611, 9.005401], 'EPSG:4326', 'EPSG:3857'),
+         zoom: 6,
+         maxZoom: 19
+      });
+
+      var map = new ol.Map({
+         controls: ol.control.defaults({
+            attributionOptions: {
+               collapsible: false
+            }
+         }),
+         interactions: ol.interaction.defaults().extend([
+            new ol.interaction.DragRotateAndZoom()
+         ]),
+         layers: [baseLayer, eth_road, boundaryLayer, wmsLayer, eth_pvt_svt, eth_electricline],
+
+         target: "map",
+
+         view: view
+      });
+
+      var scaleLineControl = new ol.control.ScaleLine();
+      map.addControl(scaleLineControl);
+
+      eth_road.setVisible(false);
+      eth_pvt_svt.setVisible(false);
+      eth_electricline.setVisible(false)
+
+
+      var popup = new ol.Overlay({
+         element: document.getElementById("popup")
+      });
+      map.addOverlay(popup);
+
+
+      // Toilet Filter Code
+      var paramsCondition = ["(is_toilet ='Yes' and is_s_tlt='No')", "(is_s_tlt ='Yes')", "(is_toilet ='No')"];
+      var query = ["(is_toilet ='Yes' and is_s_tlt='No')"];
+      $(".chkAll1").click(function () {
+         query = [];
+         $(".chkAll1:checked").each(function () {
+            query.push(paramsCondition[$(this).val() - 1]);
+         });
+         updateLayer();
+
+         // if (query.length > 0) {
+         //    wmsSource.updateParams({ 'LAYERS': 'ETH_SCHOOL:schools_by_toilet_final', "CQL_FILTER": query.join(' OR ') });
+         // } else {
+         //    wmsSource.updateParams({ 'LAYERS': 'ETH_SCHOOL:schools_by_toilet_final', "CQL_FILTER": "region=''" });
+         // }
+      });
+
+
+      var element = popup.getElement();
+      map.on("singleclick", function (evt) {
+         var viewResolution = /** @type {number} */ (view.getResolution());
+         var url = wmsSource.getGetFeatureInfoUrl(
+            evt.coordinate,
+            viewResolution,
+            "EPSG:3857",
+            { INFO_FORMAT: "text/xml" }
+         );
+         if (url) {
+            //console.log(url);
+            var x = new XMLHttpRequest();
+            x.open("GET", url, true);
+            x.onreadystatechange = function () {
+               if (x.readyState == 4 && x.status == 200) {
+                  var xmldoc = x.responseXML;
+                  var coordinate = evt.coordinate;
+                  var hdms = ol.coordinate.toStringHDMS(
+                     ol.proj.transform(coordinate, "EPSG:3857", "EPSG:4326")
+                  );
+                  if (x.responseXML.getElementsByTagName(
+                     "ETH_SCHOOL:schools_by_toilet_final"
+                  ).length != 0) {
+                     var xml = x.responseXML.getElementsByTagName(
+                        "ETH_SCHOOL:schools_by_toilet_final"
+                     )[0].children;
+                     //console.log(xml);
+                     var template = { region: "", zone: "", worida: "", name: "", photo1: "", photo2: "" };
+                     for (var i = 0; i < xml.length; i++) {
+                        //console.log(xml[i].localName);
+                        if ("region" == xml[i].localName) {
+                           //alert("hi");
+                           template.region = xml[i].innerHTML;
+                        }
+                        if ("zone" == xml[i].localName) {
+                           template.zone = xml[i].innerHTML;
+                        }
+                        if ("woreda" == xml[i].localName) {
+                           template.worida = xml[i].innerHTML;
+                        }
+                        if ("name" == xml[i].localName) {
+                           template.name = xml[i].innerHTML;
+                        }
+                        if ("photo1" == xml[i].localName) {
+                           template.photo1 = xml[i].innerHTML;
+                        }
+                        if ("photo2" == xml[i].localName) {
+                           template.photo2 = xml[i].innerHTML;
+                        }
+                        if ("sch_code" == xml[i].localName) {
+                           template.sch_id = xml[i].innerHTML;
+                        }
+                     }
+
+
+                     var photoURL = "";
+                     if (template.photo1 != "") {
+                        photoURL = "http://ethschoolmap.com/SchoolPhoto/" + template.photo1
+                     }
+                     else {
+                        photoURL = "http://ethschoolmap.com/SchoolPhoto/" + template.photo2
+                     }
+                     $(element).popover("destroy");
+                     popup.setPosition(coordinate);
+                     // the keys are quoted to prevent renaming in ADVANCED mode.
+                     $(element).popover({
+                        placement: "auto",
+                        animation: false,
+                        html: true,
+                        content:
+                           "<div id='gg'>" +
+                           "<img src='" + photoURL + "' alt='school'></img>" +
+                           "<div class='contentblock'>" +
+                           "<div onclick='myFunction()'><a href='javascript:void(0);' id='closeBtnN' class='close1nxt'><i class='fa fa-times'></i></a></div>" +
+                           "<code class='schoolname'>" +
+                           template.name +
+                           "</code><br><code>" +
+                           template.region +
+                           "</code><br><code>" +
+                           template.zone +
+                           "</code><br><code>" +
+                           template.worida +
+                           "</code><br><a href='javascript:void(0);' data-id='" + template.sch_id + "' class='openDetailModal btn btn-sm btn-success m-t-10'>View Detail</a>" +
+                           "</div>"
+                     });
+                     $(element).popover("show");
+                     $(".openDetailModal").on("click", function () {
+                        var tempId = $(".openDetailModal").data("id")
+                        schoolDetail(tempId)
+                     });
+                  }
+                  else {
+                     $(element).popover("destroy");
+                  }
+
+               }
+            };
+            x.send(null);
+         }
+      });
+
+      var zoomVal = 6;
+      function schoolDetail(code) {
+         $('#myModalSchoolDtl').modal('show');
+         $.ajax({
+            url: "http://" + Config_URL + ":3001/getSchoolDetail",
+            type: "POST",
+            dataType: "json",
+            data: { "sCode": code },
+            success: function (data, textStatus, xhr) {
+               var data = data;
+               if (data.msg.length > 0) {
+                  $(element).popover("destroy");
+                  $('#tblData').html('')
+                  var clickedSchoolData = data.msg[0];
+                  $('#myModalLabel').text(clickedSchoolData.name + ' (' + code + ')');
+                  if (clickedSchoolData.photo1 != null) {
+                     $("#img1").show()
+                     $("#img1").attr("src", "http://ethschoolmap.com/SchoolPhoto/" + clickedSchoolData.photo1);
+                  }
+                  else {
+                     $("#img1").show()
+                     $("#img1").attr("src", "http://ethschoolmap.com/SchoolPhoto/" + clickedSchoolData.photo2);
+                  }
+                  $('#tblData').html('')
+                  $('#map1').html('')
+
+                  var boys = "NA"
+                  var girls = "NA"
+                  if (clickedSchoolData.female != null) {
+                     girls = clickedSchoolData.female
+                  }
+                  if (clickedSchoolData.male != null) {
+                     boys = clickedSchoolData.male
+                  }
+
+                  console.log(clickedSchoolData)
+                  var tempHTML = '<tbody><tr><td width="18%">Region</td><td width="1%">:</td><td width="28%">' + clickedSchoolData.region + '</td><td width="5%"> </td><td width="18%">Zone</td><td width="1%">:</td><td>' + clickedSchoolData.zone + '</td></tr>	<tr><td>Woreda</td><td>:</td><td>' + clickedSchoolData.woreda + '</td><td> </td><td>No. of Class Rooms</td><td>:</td><td>' + clickedSchoolData.cls_no + '</td></tr><tr><td>Ownership</td><td>:</td><td>' + clickedSchoolData.type + '</td><td> </td><td>Year of Establishment</td><td>:</td><td>' + clickedSchoolData.est_year + '</td></tr><tr><td>Toilet</td><td>:</td><td>' + clickedSchoolData.is_toilet + '</td><td> </td><td>Separate Toilet</td><td>:</td><td>' + clickedSchoolData.is_s_tlt + '</td></tr><tr><td>Location</td><td>:</td><td>' + clickedSchoolData.lat + ',' + clickedSchoolData.longitude + '</td><td> </td><td>Zero Class</td><td>:</td><td>' + clickedSchoolData.is_o_class + '</td></tr>  <tr><td>From Grade</td><td>:</td><td>' + clickedSchoolData.f_grade + '</td><td> </td><td>To Grade</td><td>:</td><td>' + clickedSchoolData.t_grade + '</td></tr>	 <tr><td>Total Boys</td><td>:</td><td>' + boys + '</td><td> </td><td>Total Girls</td><td>:</td><td>' + girls + '</td></tr></tbody>'
+                  $('#tblData').append(tempHTML)
+                  setTimeout(function () {
+                     var view1 = new ol.View({
+                        center: ol.proj.transform(
+                           [38.763611, 9.005401],
+                           "EPSG:4326",
+                           "EPSG:3857"
+                        ),
+                        zoom: 8,
+                        maxZoom: 19
+                     });
+
+                     var bingMap1 = new ol.layer.Tile({
+                        source: new ol.source.XYZ({
+                           url: "http://mt0.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}"
+
+                        })
+                     });
+
+                     var map1 = new ol.Map({
+                        controls: ol.control.defaults({
+                           attributionOptions: {
+                              collapsible: false
+                           }
+                        }),
+                        interactions: ol.interaction
+                           .defaults()
+                           .extend([new ol.interaction.DragRotateAndZoom()]),
+                        layers: [bingMap1],
+
+                        target: "map1",
+
+                        view: view1
+                     });
+
+                     var vectorSource121;
+                     var vectorLayer121;
+                     if (
+                        vectorLayer121 != undefined &&
+                        vectorLayer121 != null &&
+                        vectorLayer121 != ""
+                     ) {
+                        map.removeLayer(vectorLayer121);
+                     }
+                     var iconFeature = new ol.Feature({
+                        geometry: new ol.geom.Point(
+                           ol.proj.transform([parseFloat(clickedSchoolData.longitude), parseFloat(clickedSchoolData.lat)], "EPSG:4326", "EPSG:3857")
+                        ),
+                        type: "click",
+                        desc:
+                           "<img src='images/sch5.jpeg' width='100%' /><b>Mi'oo Gooroo</b> </br><span class='small'>Oromiya, Arsi West, Adaabbaa</span>"
+                     });
+
+                     var iconStyle = new ol.style.Style({
+                        image: new ol.style.Icon(
+                     /** @type {olx.style.IconOptions} */({
+                              anchor: [0.5, 24],
+                              anchorXUnits: "fraction",
+                              anchorYUnits: "pixels",
+                              src: "images/mySelectedLocation.png"
+                           })
+                        )
+                     });
+
+                     iconFeature.setStyle(iconStyle);
+                     vectorSource121 = new ol.source.Vector({
+                        features: [iconFeature]
+                     });
+
+                     vectorLayer121 = new ol.layer.Vector({
+                        source: vectorSource121
+                     });
+
+                     map1.addLayer(vectorLayer121);
+                     if (vectorLayer121 != undefined && vectorLayer121 != null) {
+                        var extent = vectorLayer121.getSource().getExtent();
+                        map1.getView().fit(extent, { size: map1.getSize(), maxZoom: 14 });
+                     }
+
+                  }, 1500);
+               }
+               else {
+                  alert('No record available!')
+               }
+            },
+            error: function (xhr, textStatus, errorThrown) {
+               console.log("Error in Operation");
+            }
+         });
+      }
+
+
+      var regionExtent = '';
+      var zoneExtent = '';
+      var woredaExtent = '';
+      $(document).ready(function () {
+         $("#selRegion,#selZone,#selWorida").select2();
+         var settings = {
+            "url": "http://" + Config_URL + ":3001/loadRegionNew",
+            "method": "POST",
+            "timeout": 0,
+         };
+
+         $.ajax(settings).done(function (response) {
+            if (response.status == '200') {
+               $("#loaderPage").hide();
+               regionExtent = response.msg;
+               var campHtml = '';
+               $("#selRegion").html("");
+               $("#selZone").html("");
+               $("#selWorida").html("");
+               $("#selRegion").append('<option value="">--Select Region--</option>');
+               $("#selZone").append('<option value="">--Select Zone--</option>');
+               $("#selWorida").append('<option value="">--Select Worida--</option>');
+               $(element).popover("destroy");
+               for (var i = 0; i < response.msg.length; i++) {
+                  campHtml +=
+                     '<option value="' +
+                     response.msg[i].region +
+                     '">' +
+                     response.msg[i].region +
+                     "</option>";
+               }
+               $("#selRegion").append(campHtml);
+            } else {
+               $("#loaderPage").hide();
+               regionExtent = [];
+            }
+         });
+      });
+
+
+      $("#selRegion").change(function () {
+         var regionText = $("#selRegion :selected").text();
+         var regionVal = $("#selRegion").val();
+         if (regionVal != '') {
+            $.ajax({
+               url: "http://" + Config_URL + ":3001/loadZoneNew",
+               type: "POST",
+               dataType: "json",
+               data: { region: regionVal, regionName: regionText },
+               success: function (data, textStatus, xhr) {
+                  var filterObj = regionExtent.filter(function (e) {
+                     return e.region == regionVal;
+                  });
+                  gotoExtent(filterObj);
+                  zoneExtent = data.msg;
+                  var zoneMasterData = data;
+                  var campHtml = '';
+                  $("#selZone").html("");
+                  $("#selWorida").html("");
+                  $("#selZone").append('<option value="">--Select Zone--</option>');
+                  $("#selWorida").append('<option value="">--Select Worida--</option>');
+                  $(element).popover("destroy");
+                  for (var i = 0; i < zoneMasterData.msg.length; i++) {
+                     campHtml +=
+                        '<option value="' +
+                        zoneMasterData.msg[i].zone +
+                        '">' +
+                        zoneMasterData.msg[i].zone +
+                        "</option>";
+                  }
+                  $("#selZone").append(campHtml);
+                  updateLayer();
+               },
+               error: function (xhr, textStatus, errorThrown) {
+                  console.log("Error in Operation");
+               }
+            });
+         } else {
+            updateLayer();
+            $("#selZone").html('<option value="">--Select Zone--</option>');
+            $("#selWorida").html('<option value="">--Select Worida--</option>');
+            map.getView().animate({
+               center: ol.proj.transform([38.763611, 9.005401], 'EPSG:4326', 'EPSG:3857'),
+               zoom: 6
+            })
+         }
+      });
+
+      function gotoExtent(filterObj) {
+         var ext = filterObj[0].st_extent
+         var bounds = ext.split("BOX(")[1].split(")")[0].split(",");
+         var b1 = bounds[0].split(" ");
+         var b2 = bounds[1].split(" ");
+         b1 = new ol.proj.fromLonLat([parseFloat(b1[0]), parseFloat(b1[1])]);
+         b2 = new ol.proj.fromLonLat([parseFloat(b2[0]), parseFloat(b2[1])]);
+         var my_extent = [b1[0], b1[1], b2[0], b2[1]];
+         map.getView().fit(my_extent, { duration: 2000 });
+      }
+
+
+      $("#selZone").change(function () {
+         $("#selWorida").html("");
+         $("#selWorida").append('<option value="">--Select Worida--</option>');
+
+         $(element).popover("destroy");
+         var regionText = $("#selRegion :selected").text();
+         var regionVal = $("#selRegion").val();
+         var zoneText = $("#selZone :selected").text();
+         var zoneVal = $("#selZone").val();
+
+         if (zoneVal != "") {
+            $("#loaderPage").show();
+            $.ajax({
+               url: "http://" + Config_URL + ":3001/loadWoredaNew",
+               type: "POST",
+               dataType: "json",
+               data: { region: regionVal, regionName: regionText, zone: zoneVal, zoneName: zoneText },
+               success: function (data, textStatus, xhr) {
+                  $("#loaderPage").hide();
+                  var filterObj = zoneExtent.filter(function (e) {
+                     return e.zone == zoneVal;
+                  });
+                  gotoExtent(filterObj);
+                  woredaExtent = data.msg;
+                  var woredaMasterData = data;
+                  var campHtml = '';
+                  $("#selWorida").html("");
+                  $("#selWorida").append('<option value="">--Select Worida--</option>');
+                  $(element).popover("destroy");
+                  for (var i = 0; i < woredaMasterData.msg.length; i++) {
+                     campHtml +=
+                        '<option value="' +
+                        woredaMasterData.msg[i].woreda +
+                        '">' +
+                        woredaMasterData.msg[i].woreda +
+                        "</option>";
+                  }
+                  $("#selWorida").append(campHtml);
+                  updateLayer();
+                  // wmsSource.updateParams({ 'LAYERS': 'ETH_SCHOOL:eth_school_data_final', "CQL_FILTER": "zone	='" + zoneText + "'" });
+               },
+               error: function (xhr, textStatus, errorThrown) {
+                  console.log("Error in Operation");
+               }
+            });
+         } else {
+            var filterObj = regionExtent.filter(function (e) {
+               return e.region == regionVal;
+            });
+            gotoExtent(filterObj);
+            updateLayer();
+            // wmsSource.updateParams({ 'LAYERS': 'ETH_SCHOOL:eth_school_data_final', "CQL_FILTER": "region	='" + $("#selRegion :selected").text() + "'" });
+         }
+      });
+
+
+
+
+      $("#selWorida").change(function () {
+         $(element).popover("destroy");
+         var woridaText = $("#selWorida :selected").text();
+         var woridaVal = $("#selWorida").val();
+         if (woridaVal != "") {
+            var filterObj = woredaExtent.filter(function (e) {
+               return e.woreda == woridaVal;
+            });
+            gotoExtent(filterObj);
+            updateLayer();
+            // wmsSource.updateParams({ 'LAYERS': 'ETH_SCHOOL:eth_school_data_final', "CQL_FILTER": "zone	='" + $("#selZone :selected").text() + "' and woreda	='" + woridaText + "'" });
+         } else {
+            var filterObj = zoneExtent.filter(function (e) {
+               return e.zone == $("#selZone").val();
+            });
+            gotoExtent(filterObj);
+            updateLayer();
+            // wmsSource.updateParams({ 'LAYERS': 'ETH_SCHOOL:eth_school_data_final', "CQL_FILTER": "zone	='" + $("#selZone :selected").text() + "'" });
+         }
+      });
+
+      function updateLayer() {
+         var dropdownQuery = '';
+         if ($("#selRegion").val() != '') {
+            var regionQry = "(region='" + $("#selRegion").val() + "')";
+            dropdownQuery = "AND " + regionQry;
+            if ($("#selZone").val() != '') {
+               var zoneQry = "(zone='" + $("#selZone").val() + "')";
+               dropdownQuery += " AND " + zoneQry;
+               if ($("#selWorida").val() != '') {
+                  var woredaQry = "(woreda='" + $("#selWorida").val() + "')";
+                  dropdownQuery += " AND " + woredaQry;
+               }
+            }
+         }
+
+         if (query.length > 0) {
+            wmsSource.updateParams({ 'LAYERS': 'ETH_SCHOOL:schools_by_toilet_final', "CQL_FILTER": "(" + query.join(' OR ') + ")" + dropdownQuery });
+         } else {
+            wmsSource.updateParams({ 'LAYERS': 'ETH_SCHOOL:schools_by_toilet_final', "CQL_FILTER": "region=''" + dropdownQuery });
+         }
+      }
+
+      var rotateIndex = [-4.725660433524355, -3.1374249228564333, -1.6101493759315917, 0];
+      var r = 0;
+      $("#rotate").click(function () {
+         map.getView().setRotation(rotateIndex[r]);
+         r++;
+         if (r == 4) {
+            r = 0;
+         }
+      });
+      //When user click default reset button of openlayers
+      $(".ol-rotate-reset").click(function () {
+         r = 0;
+      });
+   </script>
+
+
+   <!-- Spatial Tools Script -->
+   <script>
+      //Zoom to Home location
+      $("#home").click(function () {
+         map.getView().animate({
+            center: ol.proj.transform([38.763611, 9.005401], 'EPSG:4326', 'EPSG:3857'),
+            zoom: 6
+         })
+      });
+
+
+      //Make the map full screen
+      var elem = document.getElementById("map");
+      $("#fullScrn").click(function () {
+         if (elem.requestFullscreen) {
+            elem.requestFullscreen();
+         } else if (elem.mozRequestFullScreen) {
+            /* Firefox */
+            elem.mozRequestFullScreen();
+         } else if (elem.webkitRequestFullscreen) {
+            /* Chrome, Safari and Opera */
+            elem.webkitRequestFullscreen();
+         } else if (elem.msRequestFullscreen) {
+            /* IE/Edge */
+            elem.msRequestFullscreen();
+         }
+      });
+
+      $("#layerClick").click(function () {
+         $('.myMenu').toggle();
+      });
+
+
+      $("#road").click(function () {
+         if ($(this).is(":checked")) {
+            eth_road.setVisible(true);
+         } else {
+            eth_road.setVisible(false);
+         }
+      });
+      $("#pvt_svt").click(function () {
+         if ($(this).is(":checked")) {
+            eth_pvt_svt.setVisible(true);
+         } else {
+            eth_pvt_svt.setVisible(false);
+         }
+      });
+      /*$("#boundary").click(function () {
+        boundary = document.getElementById("boundary").checked;
+      });*/
+
+      $("#electricline").click(function () {
+         if ($(this).is(":checked")) {
+            eth_electricline.setVisible(true);
+         } else {
+            eth_electricline.setVisible(false);
+         }
+      });
+
+
+      $("#mapimg").click(function () {
+         $(".floatingArea").slideToggle();
+      });
+      $('#clsIcon').click(function () {
+         $('.floatingArea').slideUp();
+         // $(this).find('i').toggleClass('fa-angle-down');
+      });
+
+
+      //Control for changing base map source
+      $("#liOpenMap").click(function () {
+         baseLayer.setSource(null);
+         baseLayer.setSource(osmSource);
+      })
+      $("#liBingMap").click(function () {
+         baseLayer.setSource(null);
+         baseLayer.setSource(satelliteSource);
+      });
+
+
+
+
+
+      /********************************Measurement Tool***********************************/
+      var measurementVal = 1;
+      var sourceDraw = new ol.source.Vector();
+      $("#draw").click(function () {
+         if (measurementVal == 1) {
+            map.addLayer(vectorDraw);
+            addInteraction();
+            measurementVal = 2
+         }
+         else {
+            clearDraw()
+         }
+
+      });
+
+      function clearDraw() {
+         measurementVal = 1
+         map.removeInteraction(draw);
+         map.removeLayer(vectorDraw);
+         sourceDraw.clear();
+         map.removeOverlay(helpTooltip);
+         map.removeOverlay(measureTooltip);
+         $('.ol-overlay-container').find('.tooltip-static').hide()
+      }
+
+
+
+      var vectorDraw = new ol.layer.Vector({
+         source: sourceDraw,
+         style: new ol.style.Style({
+            fill: new ol.style.Fill({
+               color: 'rgba(255, 255, 255, 0.2)'
+            }),
+            stroke: new ol.style.Stroke({
+               color: '#ffcc33',
+               width: 2
+            }),
+            image: new ol.style.Circle({
+               radius: 7,
+               fill: new ol.style.Fill({
+                  color: '#ffcc33'
+               })
+            })
+         })
+      });
+
+
+
+
+      /**
+           * Currently drawn feature.
+           * @type {ol.Feature}
+           */
+      var sketch;
+
+
+      /**
+       * The help tooltip element.
+       * @type {Element}
+       */
+      var helpTooltipElement;
+
+
+      /**
+       * Overlay to show the help messages.
+       * @type {ol.Overlay}
+       */
+      var helpTooltip;
+
+
+      /**
+       * The measure tooltip element.
+       * @type {Element}
+       */
+      var measureTooltipElement;
+
+
+      /**
+       * Overlay to show the measurement.
+       * @type {ol.Overlay}
+       */
+      var measureTooltip;
+
+
+      /**
+       * Message to show when the user is drawing a polygon.
+       * @type {string}
+       */
+      var continuePolygonMsg = 'Click to continue drawing the polygon';
+
+      var draw; // global so we can remove it later
+
+      function addInteraction() {
+         /**
+          * Message to show when the user is drawing a line.
+          * @type {string}
+          */
+         var continueLineMsg = 'Click to continue drawing the line';
+         var type = 'LineString'//(typeSelect.value == 'area' ? 'Polygon' : 'LineString');
+         draw = new ol.interaction.Draw({
+            source: sourceDraw,
+            type: type,
+            style: new ol.style.Style({
+               fill: new ol.style.Fill({
+                  color: 'rgba(255, 255, 255, 0.2)'
+               }),
+               stroke: new ol.style.Stroke({
+                  color: 'rgba(0, 0, 0, 0.5)',
+                  lineDash: [10, 10],
+                  width: 2
+               }),
+               image: new ol.style.Circle({
+                  radius: 5,
+                  stroke: new ol.style.Stroke({
+                     color: 'rgba(0, 0, 0, 0.7)'
+                  }),
+                  fill: new ol.style.Fill({
+                     color: 'rgba(255, 255, 255, 0.2)'
+                  })
+               })
+            })
+         });
+         map.addInteraction(draw);
+
+         createMeasureTooltip();
+         createHelpTooltip();
+
+         var listener;
+         draw.on('drawstart',
+            function (evt) {
+               // set sketch
+               sketch = evt.feature;
+
+               /** @type {ol.Coordinate|undefined} */
+               var tooltipCoord = evt.coordinate;
+
+               listener = sketch.getGeometry().on('change', function (evt) {
+                  var geom = evt.target;
+                  var output;
+                  output = formatLength(geom);
+                  //console.log(output)
+                  tooltipCoord = geom.getLastCoordinate();
+                  measureTooltipElement.innerHTML = output;
+                  measureTooltip.setPosition(tooltipCoord);
+               });
+            }, this);
+
+         draw.on('drawend',
+            function (e) {
+               measureTooltipElement.className = 'tooltip tooltip-static';
+               measureTooltip.setOffset([0, -7]);
+               // unset sketch
+               sketch = null;
+               // unset tooltip so that a new one can be created
+               measureTooltipElement = null;
+               createMeasureTooltip();
+               ol.Observable.unByKey(listener);
+
+            }, this);
+
+         /**
+   * Creates a new help tooltip
+   */
+         function createHelpTooltip() {
+            if (helpTooltipElement) {
+               helpTooltipElement.parentNode.removeChild(helpTooltipElement);
+            }
+            helpTooltipElement = document.createElement('div');
+            helpTooltipElement.className = 'tooltip hidden';
+            helpTooltip = new ol.Overlay({
+               element: helpTooltipElement,
+               offset: [15, 0],
+               positioning: 'center-left'
+            });
+            map.addOverlay(helpTooltip);
+
+         }
+
+
+         /**
+          * Creates a new measure tooltip
+          */
+         function createMeasureTooltip() {
+            if (measureTooltipElement) {
+               measureTooltipElement.parentNode.removeChild(measureTooltipElement);
+            }
+            measureTooltipElement = document.createElement('div');
+            measureTooltipElement.className = 'tooltip tooltip-measure';
+            measureTooltip = new ol.Overlay({
+               element: measureTooltipElement,
+               offset: [0, -15],
+               positioning: 'bottom-center'
+            });
+            map.addOverlay(measureTooltip);
+         }
+
+         var pointerMoveHandler = function (evt) {
+            if (evt.dragging) {
+               return;
+            }
+            /** @type {string} */
+            var helpMsg = 'Click to start drawing';
+
+            if (sketch) {
+               var geom = (sketch.getGeometry());
+               if (geom instanceof ol.geom.Polygon) {
+                  helpMsg = continuePolygonMsg;
+               } else if (geom instanceof ol.geom.LineString) {
+                  helpMsg = continueLineMsg;
+               }
+            }
+            //console.log(helpMsg)
+            helpTooltipElement.innerHTML = helpMsg;
+
+            helpTooltip.setPosition(evt.coordinate);
+
+            helpTooltipElement.classList.remove('hidden');
+         };
+         map.on('pointermove', pointerMoveHandler);
+
+         map.getViewport().addEventListener('mouseout', function () {
+            helpTooltipElement.classList.add('hidden');
+         });
+
+         var typeSelect = document.getElementById('type');
+
+
+
+
+         /**
+          * Format length output.
+          * @param {ol.geom.LineString} line The line.
+          * @return {string} The formatted length.
+          */
+         var formatLength = function (line) {
+            var length = ol.Sphere.getLength(line);
+            var output;
+            if (length > 100) {
+               output = (Math.round(length / 1000 * 100) / 100) +
+                  ' ' + 'km';
+            } else {
+               output = (Math.round(length * 100) / 100) +
+                  ' ' + 'm';
+            }
+            return output;
+         };
+
+
+         /**
+          * Format area output.
+          * @param {ol.geom.Polygon} polygon The polygon.
+          * @return {string} Formatted area.
+          */
+         var formatArea = function (polygon) {
+            var area = ol.Sphere.getArea(polygon);
+            var output;
+            if (area > 10000) {
+               output = (Math.round(area / 1000000 * 100) / 100) +
+                  ' ' + 'km<sup>2</sup>';
+            } else {
+               output = (Math.round(area * 100) / 100) +
+                  ' ' + 'm<sup>2</sup>';
+            }
+            return output;
+         };
+      }
+
+      /********************************Measurement Tool***********************************/
+      function myFunction() {
+         $(element).popover("destroy");
+      }
+
+
+      //Export Report 
+      $("#dvjson").on("click", function () {
+         var options = {
+            fileName: "exportData"
+         };
+         callApiReport();
+      });
+
+      function callApiReport() {
+         var dataObj = {
+            region: $("#selRegion").val(),
+            zone: $("#selZone").val(),
+            woreda: $("#selWorida").val(),
+            query: query.join(' OR ')
+         };
+         if (dataObj.region != '') {
+            $.ajax({
+               url: "http://" + Config_URL + ":3001/toiletrptExportExcelNew",
+               type: "POST",
+               dataType: "json",
+               data: dataObj,
+               success: function (data, textStatus, xhr) {
+                  if (data.msg.length > 0) {
+                     JSONToCSVConvertor(data.msg, "Toilet Report", true);
+                  }
+                  else {
+                     alert("No Record available for export!")
+                  }
+               },
+               error: function (xhr, textStatus, errorThrown) {
+                  console.log("Error in Operation");
+               }
+            });
+         } else {
+            alert('Please select a region !');
+         }
+      }
+
+
+      function JSONToCSVConvertor(JSONData, ReportTitle, ShowLabel) {
+         //If JSONData is not an object then JSON.parse will parse the JSON string in an Object
+         var arrData =
+            typeof JSONData != "object" ? JSON.parse(JSONData) : JSONData;
+
+         var CSV = "";
+         //Set Report title in first row or line
+
+         CSV += ReportTitle + "\r\n\n";
+
+         //This condition will generate the Label/Header
+         if (ShowLabel) {
+            var row = "";
+
+            //This loop will extract the label from 1st index of on array
+            for (var index in arrData[0]) {
+               //Now convert each value to string and comma-seprated
+               row += index + ",";
+            }
+
+            row = row.slice(0, -1);
+
+            //append Label row with line break
+            CSV += row + "\r\n";
+         }
+
+         //1st loop is to extract each row
+         for (var i = 0; i < arrData.length; i++) {
+            var row = "";
+
+            //2nd loop will extract each column and convert it in string comma-seprated
+            for (var index in arrData[i]) {
+               row += '"' + arrData[i][index] + '",';
+            }
+
+            row.slice(0, row.length - 1);
+
+            //add a line break after each row
+            CSV += row + "\r\n";
+         }
+
+         if (CSV == "") {
+            alert("Invalid data");
+            return;
+         }
+
+         //Generate a file name
+         var fileName = "ETH_School_";
+         //this will remove the blank-spaces from the title and replace it with an underscore
+         fileName += ReportTitle.replace(/ /g, "_");
+
+         //Initialize file format you want csv or xls
+         var uri = "data:text/csv;charset=utf-8," + escape(CSV);
+
+         // Now the little tricky part.
+         // you can use either>> window.open(uri);
+         // but this will not work in some browsers
+         // or you will not get the correct file extension
+
+         //this trick will generate a temp <a /> tag
+         var link = document.createElement("a");
+         link.href = uri;
+
+         //set the visibility hidden so it will not effect on your web-layout
+         link.style = "visibility:hidden";
+         link.download = fileName + ".csv";
+
+         //this part will append the anchor tag and remove it after automatic click
+         document.body.appendChild(link);
+         link.click();
+         document.body.removeChild(link);
+      }
+
+
+
+      // //Print PDF Map
+
+      // var dims = {
+      //    a0: [1189, 841],
+      //    a1: [841, 594],
+      //    a2: [594, 420],
+      //    a3: [420, 297],
+      //    a4: [297, 210],
+      //    a5: [210, 148]
+      // };
+      // var loading = 0;
+      // var loaded = 0;
+
+      // var exportButton = document.getElementById("printMap");
+
+      // exportButton.addEventListener(
+      //    "click",
+      //    function () {
+      //       exportButton.disabled = true;
+      //       document.body.style.cursor = "progress";
+
+      //       var format = "a4";
+      //       var resolution = "150";
+      //       var dim = dims[format];
+      //       var width = Math.round((dim[0] * resolution) / 25.4);
+      //       var height = Math.round((dim[1] * resolution) / 25.4);
+      //       var size = /** @type {ol.Size} */ (map.getSize());
+      //       var extent = map.getView().calculateExtent(size);
+
+      //       var source = baseLayer.getSource();
+
+      //       var tileLoadStart = function () {
+      //          ++loading;
+      //       };
+
+      //       var tileLoadEnd = function () {
+      //          ++loaded;
+      //          if (loading === loaded) {
+      //             var canvas = this;
+      //             window.setTimeout(function () {
+      //                loading = 0;
+      //                loaded = 0;
+      //                var data = canvas.toDataURL("image/png");
+      //                var pdf = new jsPDF("landscape", undefined, format);
+      //                pdf.addImage(data, "JPEG", 0, 0, dim[0], dim[1]);
+      //                pdf.save("map.pdf");
+      //                source.un("tileloadstart", tileLoadStart);
+      //                source.un("tileloadend", tileLoadEnd, canvas);
+      //                source.un("tileloaderror", tileLoadEnd, canvas);
+      //                map.setSize(size);
+      //                map.getView().fit(extent);
+      //                map.renderSync();
+      //                exportButton.disabled = false;
+      //                document.body.style.cursor = "auto";
+      //             }, 100);
+      //          }
+      //       };
+
+      //       map.once("postcompose", function (event) {
+      //          source.on("tileloadstart", tileLoadStart);
+      //          source.on("tileloadend", tileLoadEnd, event.context.canvas);
+      //          source.on("tileloaderror", tileLoadEnd, event.context.canvas);
+      //       });
+
+      //       map.setSize([width, height]);
+      //       map.getView().fit(extent);
+      //       map.renderSync();
+      //    },
+      //    false
+      // );
+
+   </script>
+   <!-- Modal -->
+   <div id="aboutconten" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+
+
+         <div class="modal-content">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal">&times;</button>
+               <h4 class="modal-title"> About ETH School Mapping </h4>
+            </div>
+            <div class="modal-body">
+               <p>The World Bank education team in Ethiopia seeks the professional services of a firm specializing in
+                  GIS analysis to develop school maps for Ethiopia. The school mapping exercise will serve as an input
+                  in determining where, when, and what type of schools to construct by the Federal Ministry of
+                  Education, Regional Education Bureaus, Zonal and Woreda Education offices. Hence, school construction
+                  can be based on objective measures. </p>
+               <br>
+               <p> The proposed analysis will utilize GIS methods using spatial (geo-referenced) and non-spatial
+                  attribute data. A census of all schools (pre-primary (O-class) up to secondary schools including
+                  private, public, etc.) in Ethiopia will be conducted to collect location coordinates and other
+                  school-level administration data. Secondary data from previous surveys such as the Demographic and
+                  Health Surveys (DHS); Household, Income, and Consumption Expenditure (HICE); and World Banks’ Living
+                  Standards Measurement Surveys (LSMS) for Ethiopia will be utilized to complement the survey. Ministry
+                  of Education also has GIS data for many schools, approximately 60 to 70 percent of all public schools.
+                  While some of the data are obsolete, a selected firm may be able to make use of the available data to
+                  increase efficiency of data collection. The usage of the GIS data available in the Ministry should be
+                  approved by the Ministry.</p>
+               <br>
+               <p> The proposed analysis will provide a broad overview of the current school distribution, the synergy
+                  in the distribution of primary and secondary schools, and picture of the state of education resources
+                  allocation by developing and launching a spatial dataset with a graphic and visual web interface It
+                  will also identify potential channels of influence and partners for engagement to achieve equity and
+                  quality in the education sector in Ethiopia. </p>
+
+            </div>
+            <div class="modal-footer">
+               <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+         </div>
+
+      </div>
+   </div>
+
+   <div class="modal fade" id="myModalSchoolDtl" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog modal-lg" role="document">
+         <div class="modal-content">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                     aria-hidden="true">&times;</span></button>
+               <h4 class="modal-title" id="myModalLabel"></h4>
+            </div>
+            <div class="modal-body">
+               <div id="scholDetalmodal">
+                  <div class="col-sm-6">
+                     <div class="school-slider">
+                        <div class="item active" id="divimg1">
+                           <img id="img1" alt="Gulen School" style="object-fit: cover;
+                max-height: 307px;
+                width: 100%;
+                display: block;
+                margin: 0px auto;">
+
+                        </div>
+                        <!-- <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+				  <ol class="carousel-indicators hideList">
+					<li data-target="#carousel-example-generic" data-slide-to="0" class="active" id="scroll1"></li>
+					<li data-target="#carousel-example-generic" data-slide-to="1" id="scroll2"></li>
+					
+				  </ol>
+
+				  <div class="carousel-inner" role="listbox">
+					<div class="item active" id="divimg1">
+					  <img src="images/Gulen-schools4.jpg" id="img1" alt="Gulen School">
+					  
+					</div>
+					<div class="item" id="divimg2">
+					  <img src="images/Gulen-schools4.jpg" id="img2" alt="Gulen School">
+					  
+					</div>
+				  </div>
+
+				  <a class="left carousel-control hideList" href="#carousel-example-generic" role="button" data-slide="prev">
+					<i class="fa fa-angle-left" aria-hidden="true"></i>
+					<span class="sr-only">Previous</span>
+				  </a>
+				  <a class="right carousel-control hideList" href="#carousel-example-generic" role="button" data-slide="next">
+					<i class="fa fa-angle-right" aria-hidden="true"></i>
+					<span class="sr-only">Next</span>
+				  </a>
+				</div>   -->
+                     </div>
+                  </div>
+                  <div class="col-sm-6 p-l-0">
+                     <div class="school-map">
+                        <div id="map1" style="height: 307px"></div>
+                     </div>
+                  </div>
+                  <div class="clearfix"></div>
+               </div>
+               <div class="schooldetailsec">
+                  <table id="tblData" class="table table-striped" cellpadding="2" cellspacing="0" border="0">
+
+                  </table>
+                  <!--<h3>School Name : <small>Ai International School </small></h3>
+			<h3>Region Name : <small>Addis Ababa Central </small></h3>
+			  <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged</p>-->
+               </div>
+            </div>
+
+         </div>
+      </div>
+   </div>
+
+   <!-- PDF Preview Modal -->
+   <div id="pdfPreview" class="pdf-modal">
+      <!-- pdf-modal content -->
+      <div class="pdf-modal-content">
+         <div style="padding:10px 10px 0px 10px;">
+            <div class="previewTitle">
+               <span>PDF Preview</span><span title="close" class="closepdf">&times;</span>
+            </div>
+         </div>
+         <div id='pdfMap'>
+
+         </div>
+         <div style="padding:0px 10px 10px 10px;">
+            <div class="pdfFooter">
+               <div style="display: inline-block; color: #e02518;"><strong>Note: </strong> Zoom & Pan to set the map
+                  position preview</div>
+               <div style="display: inline-block;">
+                  <button type="button" id='cancelPdf' title="Cancel">Cancel</button>&nbsp;
+                  <button type="button" id='savePdf' title="Save PDF">Export PDF Now</button>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+   <!-- PDF Preview Modal -->
+
+   <script src="js/custom.js"></script>
+
+   <script>
+
+      /********EXPORT PDF***********************/
+      var pdfMap = '';
+      $("#printMap").click(function () {
+         $("#pdfMap").html('');
+         $("#pdfPreview").show();
+         pdfMap = new ol.Map({
+            layers: map.getLayers().a,
+            target: 'pdfMap',
+            controls: ol.control.defaults({
+               attributionOptions: {
+                  collapsible: false
+               }
+            })
+         });
+         pdfMap.setView(map.getView());
+         pdfMap.renderSync();
+      });
+
+      $("#cancelPdf,.closepdf").click(function () {
+         $("#pdfPreview").hide();
+      });
+
+      $("#savePdf").on('click', function () {
+         var conf = confirm("Are you Sure ?");
+         if (conf == true) {
+            var data = $("#pdfMap").find('canvas')[0].toDataURL("image/png");
+            var pdf = new jsPDF('landscape');
+            pdf.addImage(data, 45, 20);
+            pdf.text('ETH Toilet Report', 45, 10);
+            var cdate = new Date();
+            var pdfName = "ETHPDF_" + cdate.getDate() + "" + (cdate.getMonth() + 1) + "" + cdate.getFullYear() + "" + cdate.getHours() + "" + cdate.getMinutes() + "" + cdate.getSeconds() + ".pdf";
+            pdf.save(pdfName);
+         }
+      });
+
+      /********END EXPORT PDF***********************/
+   </script>
+   </script>
+</body>
+
+</html>

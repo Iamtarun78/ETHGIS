@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Accessible Map</title>
+    <link rel="stylesheet" href="https://openlayers.org/en/v4.6.5/css/ol.css" type="text/css">
+    <!-- The line below is only needed for old environments like Internet Explorer and Android 4.x -->
+    <script
+        src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
+    <script src="https://openlayers.org/en/v4.6.5/build/ol.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        body {
+            margin: 0 auto;
+        }
+
+        /*****POPUP STYLE*****/
+        .ol-popup {
+            position: absolute;
+            background-color: white;
+            -webkit-filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.2));
+            filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.2));
+            border: 1px solid #cccccc;
+            border-radius: 12px;
+            bottom: 12px;
+            left: -50px;
+            min-width: 300px;
+            font-size: 14px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding-bottom: 10px;
+        }
+
+
+
+        .ol-popup .heading {
+            width: 80%;
+            padding: 5px;
+            font-weight: bold;
+            font-size: 1.01rem;
+            margin: auto;
+        }
+
+        .ol-popup table {
+            margin: 3px 0px 3px 0px;
+            width: 90%;
+            font-size: 13px;
+            margin: auto;
+        }
+
+
+        .ol-popup:after,
+        .ol-popup:before {
+            top: 100%;
+            border: solid transparent;
+            content: " ";
+            height: 0;
+            width: 0;
+            position: absolute;
+            pointer-events: none;
+        }
+
+        .ol-popup:after {
+            border-top-color: white;
+            border-width: 10px;
+            left: 48px;
+            margin-left: -10px;
+        }
+
+
+        .ol-popup td {
+            text-align: center;
+            font-size: .9rem;
+            font-weight: bold;
+        }
+
+        .ol-popup th {
+            text-align: center;
+            font-weight: normal;
+        }
+
+
+
+        #map {
+            height: 700px;
+            width: 100%;
+            position: absolute;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map" class="map"></div>
+
+    <!-- Popup content -->
+    <div id="popup" class="ol-popup">
+        <div id="popup-content"></div>
+    </div>
+    <script>
+
+        /*****************POPUP CONFIGURATION********************/
+        /**
+       * Elements that make up the popup.
+       */
+        var container = document.getElementById('popup');
+        var content = document.getElementById('popup-content');
+        var closer = document.getElementById('popup-closer');
+
+
+        /**
+         * Create an overlay to anchor the popup to the map.
+         */
+        var overlay = new ol.Overlay({
+            element: container,
+            autoPan: true,
+            autoPanAnimation: {
+                duration: 250
+            }
+        });
+
+
+
+
+        /*****Base Map Layer*****/
+        var baseMap = new ol.layer.Tile({
+            source: new ol.source.Stamen({
+                layer: 'toner'
+            })
+        });
+        /**Setting basemap Opacity**/
+        baseMap.setOpacity(0.3);
+
+
+        /*****Odisha Demography Map Layer*****/
+        var odishaLayer = new ol.layer.Vector({
+            source: new ol.source.Vector({
+                url: 'odisha.kml',
+                format: new ol.format.KML()
+            })
+        });
+        /**Setting odishaLayer Opacity**/
+        odishaLayer.setOpacity(0.7);
+
+
+
+        /*****Initializing of Map*******/
+        var map = new ol.Map({
+            layers: [
+                baseMap,
+                odishaLayer
+            ],
+            overlays: [overlay],
+            target: 'map',
+            view: new ol.View({
+                center: ol.proj.fromLonLat([84.64256738281246, 20.22664277977674]),
+                zoom: 8
+            })
+        });
+
+        setTimeout(() => {
+            map.getView().fit(odishaLayer.getSource().getExtent(), { duration: 2000 });
+        }, 5000)
+
+
+
+        map.on('singleclick', function () {
+            overlay.setPosition(undefined);
+        });
+
+        $(".ol-zoom").append("<button class='' type='button' title='Full Screen' id='fullScrn'><i class='fa fa-expand' style='font-size: .8em;' aria-hidden='true'></i></button>");
+        $("#fullScrn").click(function () {
+            var elem = document.getElementById("map");
+            elem.requestFullscreen();
+        });
+
+        $(".ol-zoom").append("<button class='' type='button' title='Goto Home' id='home'><i class='fa fa-home' aria-hidden='true'></i></button>");
+        $("#home").click(function () {
+            map.getView().animate({
+                center: new ol.proj.fromLonLat([84.64256738281246, 20.22664277977674]),
+                duration: 2000,
+                zoom: 8
+            })
+        });
+
+        $('.ol-attribution').css("display", "none");
+
+    </script>
+</body>
+
+</html>

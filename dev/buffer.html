@@ -1,0 +1,2667 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>World Bank School Mapping and Analysis</title>
+  <meta name="keywords" content="ADSYS" />
+  <meta name="description" content="ADSYS" />
+  <!-- <link rel="shortcut icon" href="javascript:void(0);" type="image/x-icon"> -->
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/font-awesome.min.css" rel="stylesheet">
+  <link href="css/animate.css" rel="stylesheet">
+  <link href="css/jquery.mCustomScrollbar.min.css" rel="stylesheet">
+  <link href="css/icons.css" rel="stylesheet">
+  <link href="css/map-style.css" rel="stylesheet" />
+  <link href="css/site.css" rel="stylesheet">
+  <!--<link href="css/sliderbar.css" rel="stylesheet">-->
+  <script src="js/jquery-2.1.1.js"></script>
+  <script type="text/javascript" src="//code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/bootstrap-datepicker.min.js"></script>
+  <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
+  <!--<script src="js/bootstrap-slider.js"></script>
+   <script src="js/highlight.min.js"></script>
+	
+	<script src="js/sliderbar.js"></script>-->
+  <!-- Include Openlayers API -->
+  <link rel="stylesheet" href="https://openlayers.org/en/v4.6.5/css/ol.css" type="text/css">
+  <link rel="stylesheet" href="https://unpkg.com/ol-popup@4.0.0/src/ol-popup.css" />
+  <!-- The line below is only needed for old environments like Internet Explorer and Android 4.x -->
+  <script
+    src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
+  <script src="https://openlayers.org/en/v4.6.5/build/ol.js"></script>
+  <script src="https://unpkg.com/ol-popup@4.0.0"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.2.61/jspdf.min.js"></script>
+  <style>
+    .map {
+      height: 550px;
+      width: 100%;
+      position: relative;
+    }
+
+    .header-right .row {
+      margin: 10px 0px;
+    }
+
+    .header-right {
+      margin-right: 20px;
+    }
+
+    .header-right .row .searchIconm {
+      padding: 5px;
+      display: block;
+      width: 35px;
+      background-color: rgb(15, 15, 94)
+    }
+
+    .col-md-10,
+    .col-md-2 {
+      padding: 0px !important;
+    }
+
+    .ol-popup-content {
+      overflow: hidden !important;
+    }
+
+    .tooltip {
+      position: relative;
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 4px;
+      color: white;
+      padding: 4px 8px;
+      opacity: 0.7;
+      white-space: nowrap;
+    }
+
+    .tooltip-measure {
+      opacity: 1;
+      font-weight: bold;
+    }
+
+    .tooltip-static {
+      background-color: #ffcc33;
+      color: black;
+      border: 1px solid white;
+    }
+
+    .tooltip-measure:before,
+    .tooltip-static:before {
+      border-top: 6px solid rgba(0, 0, 0, 0.5);
+      border-right: 6px solid transparent;
+      border-left: 6px solid transparent;
+      content: "";
+      position: absolute;
+      bottom: -6px;
+      margin-left: -7px;
+      left: 50%;
+    }
+
+    .tooltip-static:before {
+      border-top-color: #ffcc33;
+    }
+  </style>
+  <style>
+    .ol-popup {
+      position: absolute;
+      background-color: white;
+      -webkit-filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.2));
+      filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.2));
+      padding: 15px;
+      border-radius: 10px;
+      border: 1px solid #cccccc;
+      bottom: 12px;
+      left: -50px;
+      min-width: 280px;
+    }
+
+    .ol-popup:after,
+    .ol-popup:before {
+      top: 100%;
+      border: solid transparent;
+      content: " ";
+      height: 0;
+      width: 0;
+      position: absolute;
+      pointer-events: none;
+    }
+
+    .ol-popup:after {
+      border-top-color: white;
+      border-width: 10px;
+      left: 48px;
+      margin-left: -10px;
+    }
+
+    .ol-popup:before {
+      border-top-color: #cccccc;
+      border-width: 11px;
+      left: 48px;
+      margin-left: -11px;
+    }
+
+    .ol-popup-closer {
+      text-decoration: none;
+      position: absolute;
+      top: 2px;
+      right: 8px;
+    }
+
+    .ol-popup-closer:after {
+      content: "✖";
+    }
+
+    .tooltip {
+      position: relative;
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 4px;
+      color: white;
+      padding: 4px 8px;
+      opacity: 0.7;
+      white-space: nowrap;
+    }
+
+    .tooltip-measure {
+      opacity: 1;
+      font-weight: bold;
+    }
+
+    .tooltip-static {
+      background-color: #ffcc33;
+      color: black;
+      border: 1px solid white;
+    }
+
+    .tooltip-measure:before,
+    .tooltip-static:before {
+      border-top: 6px solid rgba(0, 0, 0, 0.5);
+      border-right: 6px solid transparent;
+      border-left: 6px solid transparent;
+      content: "";
+      position: absolute;
+      bottom: -6px;
+      margin-left: -7px;
+      left: 50%;
+    }
+
+    .tooltip-static:before {
+      border-top-color: #ffcc33;
+    }
+  </style>
+  <style>
+    #marker {
+      width: 20px;
+      height: 20px;
+      border: 1px solid #088;
+      border-radius: 10px;
+      background-color: #0ff;
+      opacity: 0.5;
+    }
+
+    #vienna {
+      text-decoration: none;
+      color: white;
+      font-size: 11pt;
+      font-weight: bold;
+      text-shadow: black 0.1em 0.1em 0.2em;
+    }
+
+    #cstTab .magic-radio+label:before,
+    #cstTab .magic-checkbox+label:before {
+      right: 7px;
+      top: 3px;
+      left: auto;
+    }
+
+    #cstTab .magic-radio+label:not(:empty),
+    #cstTab .magic-radio+label:not(:empty),
+    #cstTab .magic-checkbox+label:not(:empty) {
+      margin: 0 2px 5px 1px;
+      text-indent: 12px;
+      font-size: .9em;
+    }
+
+    #cstTab .magic-checkbox+label:after {
+      border-color: #fff;
+      border-style: solid;
+      border-width: 0 2px 2px 0;
+      box-sizing: border-box;
+      height: 13px;
+      left: auto;
+      right: 12px;
+      top: 3px;
+      transform: rotate(48deg);
+      width: 6px;
+    }
+
+    #cstTab .magic-radio:checked+label:after,
+    #cstTab .magic-checkbox:checked+label:after {
+      display: block;
+    }
+
+    /*#cstTab input[type=checkbox], #cstTab input[type=radio] {    margin: 6px 7px 0 7px; display: inline-block;}*/
+  </style>
+  <style>
+    .map {
+      height: 550px;
+      width: 100%;
+      position: relative;
+    }
+
+    .header-right .row {
+      margin: 10px 0px;
+    }
+
+    .header-right {
+      margin-right: 20px;
+    }
+
+    .header-right .row .searchIconm {
+      padding: 5px;
+      display: block;
+      width: 35px;
+      background-color: rgb(15, 15, 94);
+    }
+
+    .col-md-10,
+    .col-md-2 {
+      padding: 0px !important;
+    }
+
+    .ol-popup-content {
+      overflow: hidden !important;
+    }
+
+    .floatingArea {
+      display: none;
+    }
+
+    .floatingArea li a span {}
+
+    .floatingArea li a span img {
+      width: 65px;
+      height: 45px;
+      overflow: hidden;
+      padding-right: 10px;
+    }
+
+    .showhidediv {
+      padding: 10px 5px 17px 5px;
+    }
+
+    .floatingArea ul li a {
+      height: auto;
+      padding: 8px 4px 10px 8px;
+    }
+
+    .floatingArea a.closIcon {
+      top: 0px;
+    }
+
+    .modal-header {
+      background: #0c4475;
+    }
+
+    .modal-title {
+      color: #fff;
+    }
+
+    #main-menu h4.heading-text {
+      font-size: 1.05em;
+      padding: 0px 0px;
+      margin-bottom: 10px;
+      background: transparent;
+    }
+
+    #main-menu h4.heading-text small {
+      color: #000;
+      font-size: .8em;
+      display: block;
+      font-style: italic;
+      margin-top: 5px;
+    }
+
+    /* .modal-body>.close, .modal-header>.close */
+    .slidecontainer {
+      width: 100%;
+    }
+
+    .slider {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 9px;
+      border-radius: 5px;
+      background: #85aff5;
+      outline: none;
+      opacity: 0.8;
+      -webkit-transition: .3s;
+      transition: opacity .3s;
+      margin-bottom: 10px;
+    }
+
+    /*.slider:hover {
+  opacity: 1;
+}*/
+
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #1744bb;
+      cursor: pointer;
+    }
+
+    .slider::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #1744bb;
+      cursor: pointer;
+    }
+
+    /*input[type=range]:after {
+    /* background: #0333c1; * /
+    content: "";
+    position: absolute;
+    background: rgb(151, 171, 0);
+    width:auto; 
+    /* left: 3px; * /
+    /* border-radius: 50%; * /
+    height: 9px;
+    top: 0px;
+    z-index: 1;
+    /* box-shadow: 30px 0 0 rgb(190, 190, 190), 60px 0 0 rgb(190, 190, 190), 90px 0 0 rgb(190, 190, 190), 120px 0 0 rgb(190, 190, 190), 150px 0 0 rgb(190, 190, 190), 180px 0 0 rgb(190, 190, 190), 210px 0 0 rgb(190, 190, 190), 240px 0 0 rgb(190, 190, 190), 270px 0 0 rgb(190, 190, 190), 60px 1px 0 rgb(235, 235, 235), 90px 1px 0 rgb(235, 235, 235), 120px 1px 0 rgb(255, 255, 255), 150px 1px 0 rgb(235, 235, 235), 180px 1px 0 rgb(235, 235, 235), 210px 1px 0 rgb(235, 235, 235), 240px 1px 0 rgb(235, 235, 235), 270px 1px 0 rgb(235, 235, 235); */
+    }
+
+    */
+    /*input[type=range]:before {  background: #1744bb;}*/
+
+    .layer-box .div-content input {
+      margin-top: 0px;
+    }
+  </style>
+  <!-- Openlayers API Scripts End -->
+  <link href="css/bootstrap-slider.css" rel="stylesheet">
+</head>
+
+<body>
+  <div id="loaderPage"> <img src="images/loader.gif" alt="Odisha Govt. Logo" /> </div>
+  <!--===Header===-->
+  <div class="print-header">
+    <h1>WB-ET-School Mapping <small>Government of Ethiopia</small></h1>
+    <div class="clrboth"></div>
+  </div>
+  <div class="header">
+    <nav class="navbar navbar-default">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <div class="logo-sec">
+          <div class="logo"> <img src="images/etgovlogo.png" alt="Odisha Govt. Logo" />
+            <h1>ETH School Mapping<small>Government of Ethiopia</small></h1>
+          </div>
+          <div id="toggle" class="menubtn">
+            <div class="one"></div>
+            <div class="two"></div>
+            <div class="three"></div>
+          </div>
+        </div>
+      </div>
+      <ul class="nav navbar-nav navbar-left">
+        <li></li>
+        <li> <a href="javascript:void(0);" data-toggle="dropdown" class="dropdown-toggle">Report <span
+              class="caret"></span> </a>
+          <ul class="dropdown-menu" id="cstTab">
+            <li>
+              <a href="index.html" title="" name="disSchool" id="linkIndex">Distribution of Schools
+              </a>
+            </li>
+            <li>
+              <a href="buffer.html" title="" name="disSchool" id="linkBuffer">Schools’ Buffer Analysis</a>
+            </li>
+            <li>
+              <a href="toilet.html" title="" name="toiletFaci" id="linkToilet">Schools Having Toilet Facilities</a>
+            </li>
+            <li>
+              <a href="sector.html" title="" name="schoolSec" id="linkSector">View Schools by Grade</a>
+            </li>
+            <li>
+              <a href="analysis.html" title="" id="linkAnalysis" name="schPotentAnalysis">Identification of Potential
+                School Sites</a>
+            </li>
+          </ul>
+        </li>
+        <li><a href="javascript:void(0);" title="" data-toggle="modal" data-target="#aboutconten">About </a></li>
+      </ul>
+      <!-- <div class="pull-right header-right m-l-10">
+            <div class="row">
+              <div class="col-md-10">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="exampleInputName2"
+                  placeholder="Enter School Name"
+                />
+              </div>
+              <div class="col-md-2">
+                <a
+                  href="javascript:void(0);"
+                  class="searchIconm"
+                  class="pull-right"
+                  ><img src="images/search.png" alt="Plus icon" />
+                </a>
+              </div>
+            </div>
+          </div> -->
+      <ul class="nav navbar-nav navbar-right">
+        <!--Option menu for viewing eth zone and roas-->
+        <li>
+          <a href="javascript:void(0);" id="layerClick" class="dropdown-toggle " title="View Object"><img
+              src="images/layer.png" alt="Full Screen icon"></i>
+          </a>
+          <ul class="dropdown-menu myMenu" id="cstTab">
+            <li>
+              <input type="checkbox" class="magic-checkbox" id="boundary" value="Ethopia boundaries"> <label
+                for="boundary">Zone boundaries </label></li>
+            <li>
+              <input type="checkbox" class="magic-checkbox" id="road" value="Ethopia roads"> <label for="road">Ethopia
+                roads </label></li>
+            <li>
+              <input type="checkbox" class="magic-checkbox" id="pvt_svt" value="Poverty_Severty"> <label
+                for="pvt_svt">Poverty Severity </label></li>
+          </ul>
+        </li>
+
+
+        <li> <a href="javascript:void(0);" data-toggle="tooltip" data-placement="bottom" title="Measurment"
+            id="draw"><img src="images/meserment.png" alt="Meserment  icon" /> </a> </li>
+        <!-- <li>
+              <a
+                href="javascript:void(0);"
+                data-toggle="tooltip"
+                data-placement="bottom"
+                ><img src="images/rotate-map.png" alt="Rotate Map icon" />
+              </a>
+            </li> -->
+        <li> <a href="javascript:void(0);" data-toggle="tooltip" data-placement="bottom" title="Home" id="home"><img
+              src="images/home.png" alt="Plus icon" /> </a> </li>
+        <!-- <li> <a
+                href="javascript:void(0);"
+                data-toggle="tooltip"
+                data-placement="bottom"
+                ><img src="images/plus.png" alt="Plus icon" /> </a> </li>
+            <li> <a
+                href="javascript:void(0);"
+                data-toggle="tooltip"
+                data-placement="bottom"
+                ><img src="images/minus.png" alt="Minus icon" /> </a> </li> -->
+        <li> <a href="javascript:void(0);" data-toggle="tooltip" data-placement="bottom" title="Full Screen"><img
+              id="fullScrn" src="images/full-screen.png" alt="Full Screen icon" /> </a> </li>
+        <li> <a href="javascript:void(0);" data-toggle="tooltip" data-placement="bottom" title="Basemap"
+            id="mapimg"><img src="images/basemap.png" alt="Basemap icon" /> </a> </li>
+        <li> <a href="javascript:void(0);" data-toggle="tooltip" data-placement="bottom" title="Export to Excel"
+            id="dvjson"><img src="images/excel.png" alt="Export to Excel icon" /> </a> </li>
+        <li> <a href="javascript:void(0);" data-toggle="tooltip" data-placement="bottom" title="Print PDF Map"
+            id="printMap"><img src="images/pdf.png" alt="Print PDF Map icon" /> </a> </li>
+      </ul>
+    </nav>
+  </div>
+  <!--===Header===-->
+  <!--===Page container===-->
+
+  <div class="page-container">
+    <!--===Side Menu===-->
+    <div class="sidemenu">
+      <div id="main-menu">
+        <h4>Schools’ Buffer Analysis</h4>
+        <div class="nano-content" id="contAbCst">
+
+          <!--Dropdown lists -->
+          <div id="disSchool" class="noDisplayds">
+            <!-- Inline Checkboxes -->
+            <div class="form-group">
+              <label class="control-label" for="">Region Name</label>
+              <select class="form-control" id="selRegion">
+                <option value="">---Select Region---</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="control-label" for="">Zone Name</label>
+              <select class="form-control" id="selZone">
+                <option value="">---Select Zone---</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="control-label" for="">Woreda Name</label>
+              <select class="form-control" id="selWorida">
+                <option>---Select Worida---</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="control-label" for="">School Type</label>
+            <select class="form-control" id="schoolType">
+              <option>---Select School---</option>
+              <option value="Primary">Primary</option>
+              <option value="Secondary">Secondary</option>
+            </select>
+          </div>
+          <!--Dropdown lists -->
+
+          <div class="boxCst">
+            <!-- <div class="checkbox">
+              <input id="checkbox21" class="magic-checkbox chkAll1" type="checkbox" value="Primary" />
+              <label for="checkbox21"><i class="fa fa-circle-o" aria-hidden="true"
+                  style="color:#0cdc00;font-weight: bold;"></i>
+                Primary School
+              </label>
+              <input id="checkbox22" class="magic-checkbox chkAll1" type="checkbox" value="Secondary" />
+              <label for="checkbox22"><i class="fa fa-circle-o" aria-hidden="true"
+                  style="color:#9a05d6;font-weight: bold;"></i>
+                Secondary School
+              </label>
+            </div> -->
+            <div class="form-group">
+
+              <!-- <label class="control-label" for=""> Draw a Circle on Map</label> <br /> -->
+              <h4 class="heading-text"> Source Location <small>(Click on the map to pick a location)</small></h4>
+              <p class="clickmap"><b><span id="ltln1"></span> <span id="ltln2"></span></b></p>
+            </div>
+            <!-- <div class="form-group">
+                        <label class="control-label" for=""> Slide to set Distance</label>
+                        <input id="swipe" type="range" style="width: 100%">
+                        <span><b>8 KM</b></span>
+                    </div> -->
+            <div class="form-group"></div>
+            <div style="margin:10px 2px" class="slidecontainer">
+              <h4 class="heading-text">Select Radius (<span id="result"></span>)</h4>
+              <input id="price" type="range" class="slider" min="0" max="50" value="0" />
+
+              <span class="pull-left">0 k.m.</span> <span class="pull-right">50 k.m.</span>
+              <div class="clearfix"></div>
+            </div>
+
+            <!--<select class="form-control" id="selRadius">
+                      <option value="">Select Radius</option>
+                      <option value="1000">Within 1 km</option>
+                      <option value="2000">Within 2 km</option>
+                      <option value="3000">Within 3 km</option>
+                      <option value="5000">Within 5 km</option>
+                      <option value="10000">Within 10km</option>
+                  </select><br />-->
+            <!-- <input type="checkbox" name="vehicle" value="Car" id="swipe">Start Buffer <br /> -->
+            <div class="row">
+              <div class="col-md-4"> <a href="#" class="btn btn-default" id="clear">Reset</a></div>
+              <div class="col-md-8"> <a href="#" class="btn btn-md btn-mint" id="findsl">Find Schools</a></div>
+
+            </div>
+          </div>
+          <div class="bufferdiv">
+            <div class="heading">
+              <h4>Instruction</h4>
+            </div>
+            <div class="bufferbody">
+              <ul>
+                <li><span>1.</span> Select any region, zone or worida from dropdown list for wide analysis.</li>
+                <li><span>2.</span> Click inside the map of Ethiopia to select a location from which radius will be
+                  calculated.</li>
+                <li><span>3.</span> Select radius (in km) from the above slider control.</li>
+                <li><span>4.</span> Click on the Find Schools button.</li>
+                <li><span>5.</span> To capture again click on the Reset button and repeat the same process.</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- <h4>
+                        Radius: <span id="radius"></span> <span id="einheit">Meter</span>
+                    </h4> -->
+        </div>
+        <!--<div class="boxCst noDisplayd" id="SeptoiletFaci">
+        <div class="checkbox">
+        <!-- Inline Checkboxes -- >
+            <input id="Checkbox6" class="magic-checkbox" type="checkbox" checked="">
+            <label for="demo-form-inline-checkbox">Primary</label>
+            <input id="Checkbox7" class="magic-checkbox" type="checkbox">
+            <label for="demo-form-inline-checkbox-3">Secondary</label>
+          </div>
+  </div>
+        <div class="boxCst noDisplayd" id="schoolAgewise">
+    <div class="checkbox"> 
+            <!-- Inline Checkboxes -- >
+            <input id="Checkbox8" class="magic-checkbox" type="checkbox" checked="">
+            <label for="demo-form-inline-checkbox">Age wise school reports</label>
+          </div>
+  </div>
+        -->
+      </div>
+    </div>
+
+    <!--===Side Menu===-->
+
+    <!--===form page===-->
+    <div class="formpage">
+      <!--<div class="row">
+                <div class="col-md-12 col-sm-12">-->
+      <div class="panel panel-default">
+        <!-- <div class="panel-heading">View School Details</div> -->
+
+        <!-- BASIC FORM ELEMENTS -->
+        <!--===================================================-->
+        <div class="panel-body form-horizontal form-padding">
+          <!-- <div class="alert alert-primary movArean" role="alert" id="movarea">
+  It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. 
+</div> -->
+
+          <div class="floatingArea">
+            <h3>BaseMap</h3>
+            <a href="javascript:void(0);" title="Click here to close" class="closIcon" id="clsIcon"><i
+                class="fa fa-close" aria-hidden="true" style="font-size: 17px;"></i></a>
+            <ul class="fltMenu">
+              <li> <a href="javascript:void(0);" title="" name="disSchool" id="liOpenMap" class="mapType active">
+                  <span><img src="images/openlayer.png"></span>Open Layer Map</a> </li>
+              <li> <a href="javascript:void(0);" title="" name="disSchool" id="liBingMap" class="mapType"><span><img
+                      src="images/bing_sat.png"></span>Bing Map</a> </li>
+              <!--<li> <a href="javascript:void(0);" title="" name="disSchool" id="liBingRoadMap" class="mapType" ><span><img
+                                    src="images/bing_road.png"></span>Bing Road Map</a> </li> -->
+            </ul>
+          </div>
+          <div id="map" class="map"></div>
+          <div style="display: none;">
+            <!-- Clickable label for Vienna -->
+            <a class="overlay" id="vienna" target="_blank" href="http://en.wikipedia.org/wiki/Vienna">Vienna</a>
+            <div id="marker" title="Marker"></div>
+            <!-- Popup -->
+            <div id="popup" title="Welcome to OpenLayers"></div>
+          </div>
+        </div>
+        <!--===================================================-->
+        <!-- END BASIC FORM ELEMENTS -->
+        <!--New elements added-->
+        <div class="pvtsvtStatus" hidden="true" style="padding: 5px;">
+          <label for="fa fa-square"><strong>Zone according to poverty and severity</strong></label><br>
+          <span><i class="fa fa-square" aria-hidden="true" style="color:#808080;opacity:0.5"></i> less than 0</span>
+          <span><i class="fa fa-square" aria-hidden="true" style="color:#1a9b27;opacity:0.5"></i> 0 to 0.005</span>
+          <span><i class="fa fa-square" aria-hidden="true" style="color:#2ce047;opacity:0.5"></i> 0.005 to 0.01</span>
+          <span><i class="fa fa-square" aria-hidden="true" style="color:#ecf24b;opacity:0.5"></i> 0.01 to 0.03</span>
+          <span><i class="fa fa-square" aria-hidden="true" style="color:#ed9128;opacity:0.5"></i> 0.03 to 0.06</span>
+          <span><i class="fa fa-square" aria-hidden="true" style="color:#e02518;opacity:0.5"></i> More than 0.06</span>
+        </div>
+        <!--New elements added-->
+
+      </div>
+      <!--</div>
+            </div>-->
+    </div>
+  </div>
+  <!--===form page===-->
+  </div>
+  <!--===Page container===-->
+  <div id="schoolLegend">
+    <div class="toolsection">
+      <div class="relativdiv">
+        <div
+          class="maptoolbox layer-box panel panel-primary draggable-panel toolbar-panel ui-draggable ui-resizable toolbox-tools ui-widget-content"
+          id="draggable">
+          <div class="panel-heading lang-panel-header-tools ui-draggable-handle">
+            <img src="images/legend.png" width="50" alt="">
+            <b class="min-portlet">Ownership type</b>
+          </div>
+          <div class="div-content pd-1 min-portlet">
+            <div class="checkbox">
+              <input id="checkbox21" class="magic-checkbox chkAll1" type="checkbox" value="1" />
+              <label for="checkbox21">
+                <i class="fa fa-circle-o" aria-hidden="true" style="color:#0cdc00;font-weight: bold;"></i>
+                Government
+              </label>
+              <input id="checkbox22" class="magic-checkbox chkAll1" type="checkbox" value="2" />
+              <label for="checkbox22">
+                <i class="fa fa-circle-o" aria-hidden="true" style="color:#9a05d6;font-weight: bold;"></i>
+                Private
+              </label>
+              <input id="checkbox23" class="magic-checkbox chkAll1" type="checkbox" value="3" />
+              <label for="checkbox23">
+                <i class="fa fa-circle-o" aria-hidden="true" style="color:#2e19ec;font-weight: bold;"></i>
+                Other
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var zoomVal = 6;
+    var mapType = 1;
+    var searchFieldInput = "";
+    var flag = 0;
+    var measurementVal = 1
+    var dragDistance = "";
+    var p = document.getElementById("price"),
+      res = document.getElementById("result");
+
+
+    var layerVal = 0;
+    $("#layerClick").click(function () {
+      if (layerVal == 0) {
+        $('.myMenu').show();
+        layerVal = 1
+      }
+      else {
+        $('.myMenu').hide();
+        layerVal = 0
+      }
+    });
+
+
+
+    p.addEventListener("input", function () {
+      //latitude=coords[1];
+      //longitude=coords[0];
+      //if(latitude!=''){
+      dragDistance = (p.value * 1000).toString();
+      //console.log(dragDistance)
+      res.innerHTML = p.value + " k.m.";
+      //}
+
+    }, false);
+
+
+
+    $(document).ready(function () {
+      callRegion();
+      $("#boundary").prop("checked", false);
+      $("#road").prop("checked", false);
+      $("#pvt_svt").prop("checked", false);
+
+
+      $('#loaderPage').hide();
+      $("#mapimg").click(function () {
+        $(".floatingArea").slideToggle();
+      });
+      //$('[data-toggle="tooltip"]').tooltip();
+      $('#clsIcon').click(function () {
+        $('.floatingArea').slideToggle();
+        $(this).find('i').toggleClass('fa-angle-down');
+      });
+
+      // $('*').click(function () {
+      //     $('#movarea').fadeOut('slow');
+      // });
+      /*var $moveable = $('.moveAble');
+      $(document).mousemove(function (e) {
+      $moveable.css({ 'top': e.pageY, 'left': e.pageX });
+      });
+ 
+      $(".outer").height($(window).height());
+      $(".outer").width($(window).width());*/
+
+    });
+
+
+
+
+
+
+    var elem = document.getElementById("map");
+
+    /* View in fullscreen */
+    function openFullscreen() {
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+      } else if (elem.mozRequestFullScreen) { /* Firefox */
+        elem.mozRequestFullScreen();
+      } else if (elem.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
+        elem.webkitRequestFullscreen();
+      } else if (elem.msRequestFullscreen) { /* IE/Edge */
+        elem.msRequestFullscreen();
+      }
+    }
+    $("#fullScrn").click(function () {
+      openFullscreen()
+    });
+    var latitude = "";
+    var longitude = "";
+    var selectedRadius = ""
+
+
+    var baseLayer = new ol.layer.Tile({
+      source: new ol.source.OSM()
+    })
+
+    var wmsSource = new ol.source.ImageWMS({
+      url: "http://192.168.10.45:8080/geoserver/wms",
+      params: { LAYERS: "ETH_SCHOOL:eth_school_data" },
+      serverType: "geoserver",
+      crossOrigin: "anonymous"
+    });
+    var wmsLayer = new ol.layer.Image({
+      source: new ol.source.ImageWMS({
+        url: "http://192.168.10.45:8080/geoserver/wms",
+        params: { LAYERS: "ETH_SCHOOL:eth_school_data" },
+        serverType: "geoserver",
+        crossOrigin: "anonymous"
+      })
+    });
+
+    /***************Ethopia Road Layer**********************/
+    var eth_road = new ol.layer.Image({
+      source: new ol.source.ImageWMS({
+        url: "http://192.168.10.45:8080/geoserver/wms",
+        params: { LAYERS: "ETH_SCHOOL:eth_road" },
+        serverType: "geoserver",
+        crossOrigin: "anonymous"
+      })
+    });
+
+
+
+
+    /****************Ethopia Boundaries layer**************/
+    var eth_boundary = new ol.layer.Image({
+      source: new ol.source.ImageWMS({
+        url: "http://192.168.10.45:8080/geoserver/wms",
+        params: { LAYERS: "ETH_SCHOOL:eth_zone_boundary" },
+        serverType: "geoserver",
+        crossOrigin: "anonymous"
+      })
+    });
+
+    /****************Ethopia Pvt_svt layer**************/
+    var eth_pvt_svt = new ol.layer.Image({
+      source: new ol.source.ImageWMS({
+        url: "http://192.168.10.45:8080/geoserver/wms",
+        params: { LAYERS: "ETH_SCHOOL:eth_zone_severity" },
+        serverType: "geoserver",
+        crossOrigin: "anonymous"
+      })
+    });
+
+
+    var wmsSchoolSource = new ol.layer.Image({
+      source: new ol.source.ImageWMS({
+        url: "http://192.168.10.45:8080/geoserver/wms",
+        params: { LAYERS: "ETH_SCHOOL:overlay_secondary_school" },
+        serverType: "geoserver",
+        crossOrigin: "anonymous"
+      })
+    });
+
+
+
+
+
+    var raster = new ol.layer.Tile({
+      source: new ol.source.OSM()
+    });
+    var bingMap = new ol.layer.Tile({
+      source: new ol.source.BingMaps({
+        key:
+          "AhwEak-Pn6513R37o8zqIfN3HutOSk38RYKI5HGCg-lpYFfCwdGQM0d9i4GNgtlJ",
+        imagerySet: "AerialWithLabels"
+        // use maxZoom 19 to see stretched tiles instead of the BingMaps
+        // "no photos at this zoom level" tiles
+        // maxZoom: 19
+      })
+    });
+    var bingRoad = new ol.layer.Tile({
+      source: new ol.source.BingMaps({
+        key:
+          "AhwEak-Pn6513R37o8zqIfN3HutOSk38RYKI5HGCg-lpYFfCwdGQM0d9i4GNgtlJ",
+        imagerySet: "RoadOnDemand"
+        // use maxZoom 19 to see stretched tiles instead of the BingMaps
+        // "no photos at this zoom level" tiles
+        // maxZoom: 19
+      })
+    });
+    // scaleLineControl.setUnits('metric')
+    var view = new ol.View({
+      center: ol.proj.transform([38.763611, 9.005401], 'EPSG:4326', 'EPSG:3857'),
+      zoom: zoomVal
+    });
+
+    var scaleLineControl = new ol.control.ScaleLine();
+    var map = new ol.Map({
+      controls: ol.control.defaults({
+        attributionOptions: {
+          collapsible: false
+        }
+      }),
+      interactions: ol.interaction.defaults().extend([
+        new ol.interaction.DragRotateAndZoom()
+      ]),
+      layers: [raster, wmsSchoolSource],
+
+      target: "map",
+
+      view: view
+    });
+    map.addControl(scaleLineControl);
+
+
+    // var radius = (5000 / ol.proj.METERS_PER_UNIT.m);
+    //drawCircleInMeter(map,5000)
+    var vectorLayerCircle;
+    function drawCircleInMeter(map, radius, loc) {
+
+      var center = loc;
+      var circle = new ol.geom.Circle(center, radius);
+      var circleFeature = new ol.Feature(circle);
+
+      // Source and vector layer
+      var vectorSource = new ol.source.Vector({
+        projection: 'EPSG:4326'
+      });
+      vectorSource.addFeature(circleFeature);
+      vectorLayerCircle = new ol.layer.Vector({
+        source: vectorSource
+      });
+
+      map.addLayer(vectorLayerCircle);
+    }
+    var vectorSource12;
+    var vectorLayer12;
+    var markerLocObj = []
+    function addBufferMarker(evtCo) {
+
+      markerLocObj = evtCo;
+      //console.log(evtCo)
+      // drawCircleInMeter(map,5000,evtCo)
+      if (vectorLayer12 != undefined && vectorLayer12 != null && vectorLayer12 != '') {
+        map.removeLayer(vectorLayer12)
+      }
+
+      var iconFeature = new ol.Feature({
+        geometry: new ol.geom.Point([evtCo[0], evtCo[1]]),
+        type: 'click',
+        desc: "<img src='images/sch5.jpeg' width='100%' /><b>Mi'oo Gooroo</b> </br><span class='small'>Oromiya, Arsi West, Adaabbaa</span>"
+      });
+
+      var iconStyle = new ol.style.Style({
+        image: new ol.style.Icon(/** @type {olx.style.IconOptions} */({
+          anchor: [0.5, 24],
+          anchorXUnits: 'fraction',
+          anchorYUnits: 'pixels',
+          src: 'images/mySelectedLocation.png'
+        }))
+      });
+
+      iconFeature.setStyle(iconStyle);
+      vectorSource12 = new ol.source.Vector({
+        features: [iconFeature]
+      });
+
+      vectorLayer12 = new ol.layer.Vector({
+        source: vectorSource12
+      });
+
+      map.addLayer(vectorLayer12)
+    }
+
+
+
+    var draw; // global so we can remove it later
+    var popup = new ol.Overlay({
+      element: document.getElementById("popup")
+    });
+    map.addOverlay(popup);
+    $("#selRadius").change(function () {
+      selectedRadius = ""
+      selectedRadius = $("#selRadius").val();
+    });
+    var gradeDataArray = [];
+    var gradeString = "";
+    var gradeString1 = "1,2,3";
+
+    $("#schoolType").change(function () {
+      $(".chkAll1").prop("checked", true);
+      gradeString = "'" + $(this).val() + "'";
+    });
+
+    $(".chkAll1").on("click", function () {
+      gradeString1 = "";
+      gradeDataArray = [];
+      $(".chkAll1").each(function (i) {
+        if ($(this).is(":Checked")) {
+          var checkedVal = $(this)
+            .val()
+            .replace(/"/g, "'");
+          gradeDataArray.push(checkedVal);
+          // console.log(gradeDataArray)
+        }
+        for (var i = 0; i < gradeDataArray.length; i++) {
+          //console.log('aaaaaaaaaaa')
+          if (gradeString1 == "") {
+            gradeString1 = "'" + gradeDataArray[i] + "'";
+          } else {
+            gradeString1 = gradeString1 + ",'" + gradeDataArray[i] + "'";
+          }
+        }
+      });
+      if (gradeString1 == "") {
+        map.removeLayer(wmsLayer);
+      } else {
+        callApi();
+      }
+    });
+
+    $('.mapType').click(function () {
+      //clearDraw()
+      $('.mapType').removeClass('active');
+      $(this).addClass('active');
+    });
+    $("#liOpenMap").click(function () {
+      clearDraw()
+      if (mapType != 1) {
+        map.removeLayer(bingMap);
+        map.removeLayer(bingRoad);
+        //map.removeLayer(bingOrdnanceSurvey);
+        map.removeLayer(wmsLayer);
+        map.addLayer(raster);
+        callObj();
+        map.addLayer(wmsLayer);
+        mapType = 1
+      }
+    });
+
+    $("#liBingMap").click(function () {
+      clearDraw()
+      if (mapType != 2) {
+        map.removeLayer(raster);
+        map.removeLayer(bingRoad);
+        //map.removeLayer(bingOrdnanceSurvey);
+        map.removeLayer(wmsLayer);
+        map.addLayer(bingMap);
+        callObj();
+        map.addLayer(wmsLayer);
+        mapType = 2
+      }
+    });
+    $("#liBingRoadMap").click(function () {
+      clearDraw()
+      if (mapType != 3) {
+        map.removeLayer(raster);
+        map.removeLayer(bingMap);
+        //map.removeLayer(bingOrdnanceSurvey);
+        map.removeLayer(wmsLayer);
+        map.addLayer(bingRoad);
+        callObj();
+        map.addLayer(wmsLayer);
+        mapType = 3
+      }
+    });
+
+    var road, boundary, pvt_svt;
+    /*******************Click functions for ZONE AND ROADS object***********/
+    $("#road").click(function () {
+      road = document.getElementById("road").checked;
+      callObj();
+    });
+    $("#boundary").click(function () {
+      boundary = document.getElementById("boundary").checked;
+      callObj();
+    });
+    $("#pvt_svt").click(function () {
+      pvt_svt = document.getElementById("pvt_svt").checked;
+      callObj();
+    });
+    function getUrlVars() {
+      var vars = [], hash;
+      var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+      for (var i = 0; i < hashes.length; i++) {
+        hash = hashes[i].split('=');
+        vars.push(hash[0]);
+        vars[hash[0]] = hash[1];
+      }
+      return vars;
+    }
+    var authId = getUrlVars()["username"];
+    if (authId == 'testuser1') {
+      $('#printMap').show()
+      $('#dvjson').show()
+      $('#linkBuffer').attr('href', 'buffer.html?username=' + authId);
+      $('#linkIndex').attr('href', 'index.html?username=' + authId);
+      $('#linkToilet').attr('href', 'toilet.html?username=' + authId);
+      $('#linkSector').attr('href', 'sector.html?username=' + authId);
+      $('#linkAnalysis').attr('href', 'analysis.html?username=' + authId);
+    }
+    else {
+      $('#printMap').hide()
+      $('#dvjson').hide()
+    }
+    function callObj() {
+      if (pvt_svt == true) {
+        //map.removeLayer(eth_pvt_svt)
+
+        map.removeLayer(eth_pvt_svt);
+        map.addLayer(eth_pvt_svt);
+
+        $(".pvtsvtStatus").show();
+      } else {
+        map.removeLayer(eth_pvt_svt);
+        $(".pvtsvtStatus").hide();
+      }
+      if (boundary == true) {
+        //map.removeLayer(eth_road);
+
+        map.removeLayer(eth_boundary);
+        map.addLayer(eth_boundary);
+
+      } else {
+        map.removeLayer(eth_boundary);
+      }
+      if (road == true) {
+        //map.removeLayer(eth_boundary)
+
+        map.removeLayer(eth_road);
+        map.addLayer(eth_road);
+
+      } else {
+        map.removeLayer(eth_road);
+      }
+    }
+
+
+
+    var element = popup.getElement();
+    map.on("singleclick", function (evt) {
+      var viewResolution = /** @type {number} */ (view.getResolution());
+      var url = wmsSource.getGetFeatureInfoUrl(
+        evt.coordinate,
+        viewResolution,
+        "EPSG:3857",
+        { INFO_FORMAT: "text/xml" }
+      );
+      if (url) {
+        var x = new XMLHttpRequest();
+        x.open("GET", url, true);
+        x.onreadystatechange = function () {
+
+          if (x.readyState == 4 && x.status == 200) {
+
+            var coordinate = evt.coordinate;
+            var hdms = ol.coordinate.toStringHDMS(
+              ol.proj.transform(coordinate, "EPSG:3857", "EPSG:4326")
+            );
+            if (x.responseXML.getElementsByTagName(
+              "ETH_SCHOOL:schools_by_distance"
+            ).length > 0) {
+              var xml = x.responseXML.getElementsByTagName(
+                "ETH_SCHOOL:schools_by_distance"
+              )[0].children;
+              //console.log(xml);
+              var template = { region: "", zone: "", worida: "", sch_name: "", photo1: "", photo2: "" };
+              for (var i = 0; i < xml.length; i++) {
+                //console.log(xml[i].localName);
+                if ("region" == xml[i].localName) {
+                  //alert("hi");
+                  template.region = xml[i].innerHTML;
+                }
+                if ("zone" == xml[i].localName) {
+                  template.zone = xml[i].innerHTML;
+                }
+                if ("worida" == xml[i].localName) {
+                  template.worida = xml[i].innerHTML;
+                }
+                if ("sch_name" == xml[i].localName) {
+                  template.sch_name = xml[i].innerHTML;
+                }
+                if ("photo1" == xml[i].localName) {
+                  template.photo1 = xml[i].innerHTML;
+                }
+                if ("photo2" == xml[i].localName) {
+                  template.photo2 = xml[i].innerHTML;
+                }
+                if ("sch_id" == xml[i].localName) {
+                  template.sch_id = xml[i].innerHTML;
+                }
+              }
+
+
+              var photoURL = "";
+              if (template.photo1 != "") {
+                photoURL = "http://ethschoolmap.com/SchoolPhoto/" + template.photo1
+              }
+              else {
+                photoURL = "http://ethschoolmap.com/SchoolPhoto/" + template.photo2
+              }
+
+              //console.log(template);
+
+
+
+              $(element).popover("destroy");
+              popup.setPosition(coordinate);
+              // the keys are quoted to prevent renaming in ADVANCED mode.
+              $(element).popover({
+                placement: "auto",
+                animation: false,
+                html: true,
+                content:
+                  "<div id='gg'>" +
+                  "<img src='" + photoURL + "' alt='school'></img>" +
+                  "<div class='contentblock'>" +
+                  "<div onclick='myFunction()'><a href='javascript:void(0);' id='closeBtnN' class='close1nxt'><i class='fa fa-times'></i></a></div>" +
+                  "<code class='schoolname'>" +
+                  template.sch_name +
+                  "</code><br><code>" +
+                  template.region +
+                  "</code><br><code>" +
+                  template.zone +
+                  "</code><br><code>" +
+                  template.worida +
+                  "</code><br><a href='javascript:void(0);' data-id='" + template.sch_id + "' class='openDetailModal btn btn-sm btn-success m-t-10'>View Detail</a>" +
+                  "</div>"
+              });
+              $(element).popover("show");
+              $(".openDetailModal").on("click", function () {
+                var tempId = $(".openDetailModal").data("id")
+                schoolDetail(tempId)
+              });
+            }
+            else {
+              $(element).popover("destroy");
+            }
+          }
+
+
+        };
+        x.send(null);
+        // document.getElementById('info').innerHTML =
+        //     '<iframe seamless src="' + url + '"></iframe>';
+      }
+    });
+    map.on('click', function (evt) {
+
+      var coords = ol.proj.toLonLat(evt.coordinate)
+      //console.log(coords)
+      //var coords = evt.coordinate;
+      latitude = coords[1];
+      longitude = coords[0];
+      //var locTxt = "Latitude: " + lat + " Longitude: " + lon;
+
+      if (flag == 0) {
+        $('#ltln1').html(latitude)
+        $('#ltln2').html(longitude)
+        map.removeOverlay(helpTooltipNew)
+        addBufferMarker(evt.coordinate);
+      }
+
+    });
+
+    // map.on("dblclick", function(e) {
+    //     if (draw) {
+    //         return false;
+    //     }
+    // });
+    function schoolDetail(code) {
+      $('#myModalSchoolDtl').modal('show');
+      //$("#myModalSchoolDtl").remove();
+      $.ajax({
+        url: "http://192.168.10.45:3001/schooldtl",
+        type: "POST",
+        dataType: "json",
+        data: { "sCode": code },
+        success: function (data, textStatus, xhr) {
+          var data = data;
+          if (data.msg.length > 0) {
+            $(element).popover("destroy");
+            $('#tblData').html('')
+            var clickedSchoolData = data.msg[0];
+            $('#myModalLabel').text(clickedSchoolData.sch_name + ' (' + code + ')');
+            if (clickedSchoolData.photo1 != null) {
+              $("#img1").show()
+              $("#img1").attr("src", "http://ethschoolmap.com/SchoolPhoto/" + clickedSchoolData.photo1);
+            }
+            else {
+              $("#img1").show()
+              $("#img1").attr("src", "http://ethschoolmap.com/SchoolPhoto/" + clickedSchoolData.photo2);
+            }
+            $('#tblData').html('')
+            $('#map1').html('')
+
+
+            var boys = "NA"
+            var girls = "NA"
+
+            if (clickedSchoolData.female != null) {
+
+              girls = clickedSchoolData.female
+            }
+
+            if (clickedSchoolData.male != null) {
+              boys = clickedSchoolData.male
+            }
+
+            var tempHTML = '<tbody><tr><td width="18%">Region</td><td width="1%">:</td><td width="28%">' + clickedSchoolData.region + '</td><td width="5%"> </td><td width="18%">Zone</td><td width="1%">:</td><td>' + clickedSchoolData.zone + '</td></tr>	<tr><td>Woreda</td><td>:</td><td>' + clickedSchoolData.worida + '</td><td> </td><td>No. of Class Rooms</td><td>:</td><td>' + clickedSchoolData.no_class + '</td></tr><tr><td>Ownership</td><td>:</td><td>' + clickedSchoolData.ownership + '</td><td> </td><td>Year of Establishment</td><td>:</td><td>' + clickedSchoolData.year + '</td></tr><tr><td>Toilet</td><td>:</td><td>' + clickedSchoolData.sep_toilet + '</td><td> </td><td>Separate Toilet</td><td>:</td><td>' + clickedSchoolData.sep_toilet + '</td></tr><tr><td>Location</td><td>:</td><td>' + clickedSchoolData.lat + ',' + clickedSchoolData.long + '</td><td> </td><td>Zero Class</td><td>:</td><td>' + clickedSchoolData.zero_cls + '</td></tr>  <tr><td>From Grade</td><td>:</td><td>' + clickedSchoolData.f_grade + '</td><td> </td><td>To Grade</td><td>:</td><td>' + clickedSchoolData.t_grade + '</td></tr>	 <tr><td>Total Boys</td><td>:</td><td>' + boys + '</td><td> </td><td>Total Girls</td><td>:</td><td>' + girls + '</td></tr></tbody>'
+            $('#tblData').append(tempHTML)
+
+            //$('#img1').
+
+            //$("#myModalSchoolDtl").modal();
+            setTimeout(function () {
+
+              //console.log(clickedSchoolData.long)
+
+
+
+              var view1 = new ol.View({
+                // projection: "EPSG:4326",
+                // center: [38.763611,9.005401],
+                center: ol.proj.transform(
+                  [38.763611, 9.005401],
+                  "EPSG:4326",
+                  "EPSG:3857"
+                ),
+                zoom: zoomVal
+              });
+
+              // var raster1 = new ol.layer.Tile({
+              //         source: new ol.source.OSM()
+              //       });
+
+              var bingMap1 = new ol.layer.Tile({
+                source: new ol.source.BingMaps({
+                  key:
+                    "AhwEak-Pn6513R37o8zqIfN3HutOSk38RYKI5HGCg-lpYFfCwdGQM0d9i4GNgtlJ",
+                  imagerySet: "AerialWithLabels"
+                  // use maxZoom 19 to see stretched tiles instead of the BingMaps
+                  // "no photos at this zoom level" tiles
+                  // maxZoom: 19
+                })
+              });
+
+
+              var map1 = new ol.Map({
+                controls: ol.control.defaults({
+                  attributionOptions: {
+                    collapsible: false
+                  }
+                }),
+                interactions: ol.interaction
+                  .defaults()
+                  .extend([new ol.interaction.DragRotateAndZoom()]),
+                layers: [bingMap1],
+
+                target: "map1",
+
+                view: view1
+              });
+
+
+
+
+
+
+              var vectorSource121;
+              var vectorLayer121;
+
+
+              if (
+                vectorLayer121 != undefined &&
+                vectorLayer121 != null &&
+                vectorLayer121 != ""
+              ) {
+                map.removeLayer(vectorLayer121);
+              }
+              // [parseFloat(clickedSchoolData.long),parseFloat(clickedSchoolData.lat)],
+              var iconFeature = new ol.Feature({
+                //center: ol.proj.transform([long, lat], 'EPSG:4326', 'EPSG:3857'),
+                geometry: new ol.geom.Point(
+                  ol.proj.transform([parseFloat(clickedSchoolData.long), parseFloat(clickedSchoolData.lat)], "EPSG:4326", "EPSG:3857")
+                ),
+                type: "click",
+                desc:
+                  "<img src='images/sch5.jpeg' width='100%' /><b>Mi'oo Gooroo</b> </br><span class='small'>Oromiya, Arsi West, Adaabbaa</span>"
+              });
+
+              var iconStyle = new ol.style.Style({
+                image: new ol.style.Icon(
+            /** @type {olx.style.IconOptions} */({
+                    anchor: [0.5, 24],
+                    anchorXUnits: "fraction",
+                    anchorYUnits: "pixels",
+                    src: "images/mySelectedLocation.png"
+                  })
+                )
+              });
+
+              iconFeature.setStyle(iconStyle);
+              vectorSource121 = new ol.source.Vector({
+                features: [iconFeature]
+              });
+
+              vectorLayer121 = new ol.layer.Vector({
+                source: vectorSource121
+              });
+
+              map1.addLayer(vectorLayer121);
+              if (vectorLayer121 != undefined && vectorLayer121 != null) {
+                var extent = vectorLayer121.getSource().getExtent();
+                map1.getView().fit(extent, { size: map1.getSize(), maxZoom: 14 });
+              }
+
+            }, 1500);
+
+
+            //$("#myModalSchoolDtl").reload();
+          }
+          else {
+            alert('No record available!')
+          }
+          //console.log(data)
+          // for (var i = 0; i < data.msg.length; i++) {
+          //   campHtml +=
+          //     '<option value="' +
+          //     data.msg[i].id +
+          //     '">' +
+          //     data.msg[i].name +
+          //     "</option>";
+          // }
+
+        },
+        error: function (xhr, textStatus, errorThrown) {
+          console.log("Error in Operation");
+        }
+      });
+    }
+    function addInteraction() {
+      //map.addLayer(vector1)
+      //draw.destroyFeatures()
+      // var value = typeSelect.value;
+      // if (value !== 'None') {
+      // draw = new ol.interaction.Draw({
+      //     source: source1,
+      //     type: 'Circle'
+      // });
+      //console.log(draw)
+      map.addInteraction(draw);
+      $('#radius').html('800')
+      //}
+    }
+
+    $("#findsl").click(function () {
+      if (dragDistance == '') {
+        alert("please set a radius to find the schools!");
+      }
+      else if (gradeString == '') {
+        alert("please select a school type!");
+      }
+
+      else {
+        if (latitude == '') {
+          alert("please click on map to select a location!");
+        }
+        else {
+          $('#loaderPage').show();
+          //clearDraw()
+          //clearAllFromMap();
+          map.removeLayer(vectorLayerCircle);
+          map.removeLayer(wmsLayer);
+          drawCircleInMeter(map, parseInt(dragDistance) + 200, markerLocObj)
+          callApi();
+        }
+
+      }
+    });
+
+    function callApi() {
+      toiletDataArray = [];
+      var dataObj = {
+        lat: latitude,
+        long: longitude,
+        distance: dragDistance,
+        sector: gradeString,
+        grade: gradeString1,
+        region: regionText,
+        zone: zoneText,
+        worida: woridaText
+      };
+      //console.log(dataObj)
+      $.ajax({
+        url: "http://192.168.10.45:3001/bufferrpt",
+        type: "POST",
+        dataType: "json",
+        data: dataObj,
+        success: function (data, textStatus, xhr) {
+          $('#loaderPage').hide()
+          flag = 1;
+          map.removeLayer(wmsLayer);
+          //console.log(data);
+          updateWMSLayer();
+        },
+        error: function (xhr, textStatus, errorThrown) {
+          $('#loaderPage').hide()
+          console.log("Error in Operation");
+        }
+      });
+    }
+    function updateWMSLayer() {
+      callObj()
+      //var extent = vectorLayer12.getSource().getExtent();
+      var tTime = Math.floor(Math.random() * 1000000000).toString();
+      wmsSource = new ol.source.ImageWMS({
+        url: "http://192.168.10.45:8080/geoserver/wms",
+        params: { LAYERS: "ETH_SCHOOL:schools_by_distance" },
+        serverType: "geoserver",
+        crossOrigin: "anonymous"
+      });
+      wmsLayer = new ol.layer.Image({
+        source: new ol.source.ImageWMS({
+          url: "http://192.168.10.45:8080/geoserver/wms?id=" + tTime,
+          params: { LAYERS: "ETH_SCHOOL:schools_by_distance" },
+          serverType: "geoserver",
+          crossOrigin: "anonymous"
+        }),
+        //extent: extent
+      });
+      map.addLayer(wmsLayer);
+      if (vectorLayer12 != undefined && vectorLayer12 != null) {
+        var extent = vectorLayer12.getSource().getExtent();
+        map.getView().fit(extent, { size: map.getSize(), maxZoom: 14 });
+      }
+
+      // setTimeout(function(){
+      //   console.log("extent value==============")
+      //   console.log(wmsLayer.getExtent())
+      // },3000)
+    }
+
+    // $("#swipe").click(function() {
+    //     //map.removeLayer(vector1)
+    //     //map.addLayer(vector1)
+    //     map.removeLayer(vectorLayer)
+    //     addInteraction()
+    // });
+    var check;
+
+    function callApiReport() {
+      var dataObj = {
+        lat: latitude,
+        long: longitude,
+        distance: selectedRadius,
+        sector: gradeString
+      };
+      $.ajax({
+        url: "http://192.168.10.45:3001/distrptExportExcel",
+        type: "POST",
+        dataType: "json",
+        data: dataObj,
+        success: function (data, textStatus, xhr) {
+          if (data.msg.length > 0) {
+            JSONToCSVConvertor(data.msg, "Buffer Report", true);
+          }
+          else {
+            alert("No Record available for export!")
+          }
+
+        },
+        error: function (xhr, textStatus, errorThrown) {
+          console.log("Error in Operation");
+        }
+      });
+    }
+    $("#zoomPlus").on("click", function () {
+      clearDraw()
+      zoomVal = zoomVal + 1;
+      view.setZoom(zoomVal);
+      //view.zoom=view.zoom+1
+    });
+    /* View in fullscreen */
+    var elem = document.getElementById("map");
+    function openFullscreen() {
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+      } else if (elem.mozRequestFullScreen) {
+        /* Firefox */
+        elem.mozRequestFullScreen();
+      } else if (elem.webkitRequestFullscreen) {
+        /* Chrome, Safari and Opera */
+        elem.webkitRequestFullscreen();
+      } else if (elem.msRequestFullscreen) {
+        /* IE/Edge */
+        elem.msRequestFullscreen();
+      }
+    }
+
+    // var extent = ol.extent.createEmpty();
+    // var extent = my_vector_layer.getSource().getExtent();
+    function extentMaplayer() {
+      map.getView().fit(extent, map.getSize());
+      // wmsLayer.getLayers().forEach(function(layer) {
+      //     ol.extent.extend(extent, layer.getSource().getExtent());
+      //   });
+      //   map.getView().fitExtent(extent, map.getSize());
+    }
+
+    function clearAllFromMap() {
+      if (vectorLayer12 != undefined && vectorLayer12 != null && vectorLayer12 != '') {
+        dragDistance = "";
+        selectedRadius = "";
+        latitude = "";
+        longitude = "";
+        flag = 0;
+        map.removeLayer(vectorLayer12)
+        $('#ltln1').html('0')
+        $('#ltln2').html('0')
+        map.removeLayer(wmsLayer);
+        $("#selRadius").val('');
+      }
+    }
+
+    $("#fullScrn").click(function () {
+      clearDraw()
+      openFullscreen();
+    });
+
+
+    $("#clear").click(function () {
+      map.removeLayer(vectorLayerCircle);
+      document.getElementById('price').value = 0;
+      res.innerHTML = "0 k.m.";
+      clearDraw()
+      clearAllFromMap();
+      startBuffer()
+    });
+    $("#home").on("click", function () {
+      clearDraw()
+      zoomVal = 11;
+
+      view.setCenter(ol.proj.transform([38.763611, 9.005401], 'EPSG:4326', 'EPSG:3857'));
+      view.setZoom(zoomVal);
+    });
+
+    $("#zoomMinus").on("click", function () {
+      clearDraw()
+      zoomVal = zoomVal - 1;
+      view.setZoom(zoomVal);
+      //view.zoom=view.zoom+1
+    });
+
+    var dims = {
+      a0: [1189, 841],
+      a1: [841, 594],
+      a2: [594, 420],
+      a3: [420, 297],
+      a4: [297, 210],
+      a5: [210, 148]
+    };
+    var loading = 0;
+    var loaded = 0;
+
+    var exportButton = document.getElementById("printMap");
+
+    exportButton.addEventListener(
+      "click",
+      function () {
+        exportButton.disabled = true;
+        document.body.style.cursor = "progress";
+
+        var format = "a4";
+        var resolution = "150";
+        var dim = dims[format];
+        var width = Math.round((dim[0] * resolution) / 25.4);
+        var height = Math.round((dim[1] * resolution) / 25.4);
+        var size = /** @type {ol.Size} */ (map.getSize());
+        var extent = map.getView().calculateExtent(size);
+
+        var source = raster.getSource();
+
+        var tileLoadStart = function () {
+          ++loading;
+        };
+
+        var tileLoadEnd = function () {
+          ++loaded;
+          if (loading === loaded) {
+            var canvas = this;
+            window.setTimeout(function () {
+              loading = 0;
+              loaded = 0;
+              var data = canvas.toDataURL("image/png");
+              var pdf = new jsPDF("landscape", undefined, format);
+              pdf.addImage(data, "JPEG", 0, 0, dim[0], dim[1]);
+              pdf.save("map.pdf");
+              source.un("tileloadstart", tileLoadStart);
+              source.un("tileloadend", tileLoadEnd, canvas);
+              source.un("tileloaderror", tileLoadEnd, canvas);
+              map.setSize(size);
+              map.getView().fit(extent);
+              map.renderSync();
+              exportButton.disabled = false;
+              document.body.style.cursor = "auto";
+            }, 100);
+          }
+        };
+
+        map.once("postcompose", function (event) {
+          source.on("tileloadstart", tileLoadStart);
+          source.on("tileloadend", tileLoadEnd, event.context.canvas);
+          source.on("tileloaderror", tileLoadEnd, event.context.canvas);
+        });
+
+        map.setSize([width, height]);
+        map.getView().fit(extent);
+        map.renderSync();
+      },
+      false
+    );
+    $("#dvjson").on("click", function () {
+      var options = {
+        fileName: "exportData"
+      };
+      if (dragDistance == '') {
+        alert("please set a radius to find the schools!");
+      }
+      else if (gradeString == '') {
+        alert("please select a school type!");
+      }
+
+      else {
+        if (latitude == '') {
+          alert("please click on map to select a location!");
+        }
+        else {
+          callApiReport();
+        }
+
+      }
+
+    });
+    function JSONToCSVConvertor(JSONData, ReportTitle, ShowLabel) {
+
+      //If JSONData is not an object then JSON.parse will parse the JSON string in an Object
+      var arrData =
+        typeof JSONData != "object" ? JSON.parse(JSONData) : JSONData;
+
+      var CSV = "";
+      //Set Report title in first row or line
+
+      CSV += ReportTitle + "\r\n\n";
+
+      //This condition will generate the Label/Header
+      if (ShowLabel) {
+        var row = "";
+
+        //This loop will extract the label from 1st index of on array
+        for (var index in arrData[0]) {
+          //Now convert each value to string and comma-seprated
+          row += index + ",";
+        }
+
+        row = row.slice(0, -1);
+
+        //append Label row with line break
+        CSV += row + "\r\n";
+      }
+
+      //1st loop is to extract each row
+      for (var i = 0; i < arrData.length; i++) {
+        var row = "";
+
+        //2nd loop will extract each column and convert it in string comma-seprated
+        for (var index in arrData[i]) {
+          row += '"' + arrData[i][index] + '",';
+        }
+
+        row.slice(0, row.length - 1);
+
+        //add a line break after each row
+        CSV += row + "\r\n";
+      }
+
+      if (CSV == "") {
+        alert("Invalid data");
+        return;
+      }
+
+      //Generate a file name
+      var fileName = "ETH_School_";
+      //this will remove the blank-spaces from the title and replace it with an underscore
+      fileName += ReportTitle.replace(/ /g, "_");
+
+      //Initialize file format you want csv or xls
+      var uri = "data:text/csv;charset=utf-8," + escape(CSV);
+
+      // Now the little tricky part.
+      // you can use either>> window.open(uri);
+      // but this will not work in some browsers
+      // or you will not get the correct file extension
+
+      //this trick will generate a temp <a /> tag
+      var link = document.createElement("a");
+      link.href = uri;
+
+      //set the visibility hidden so it will not effect on your web-layout
+      link.style = "visibility:hidden";
+      link.download = fileName + ".csv";
+
+      //this part will append the anchor tag and remove it after automatic click
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+
+
+
+    var sourceDraw = new ol.source.Vector();
+    $("#draw").click(function () {
+      if (measurementVal == 1) {
+        flag = 1;
+        map.removeLayer(vectorLayerCircle);
+        clearDraw()
+        clearAllFromMap();
+        map.addLayer(vectorDraw);
+        addInteraction();
+        measurementVal = 2
+        //startBuffer()
+      }
+      else {
+        flag = 0;
+        //measurementVal = 1
+        clearDraw()
+        startBuffer()
+      }
+
+    });
+
+    function clearDraw() {
+      measurementVal = 1
+      map.removeInteraction(draw);
+      map.removeLayer(vectorDraw);
+      sourceDraw.clear();
+      map.removeOverlay(helpTooltip);
+      map.removeOverlay(measureTooltip);
+      $('.ol-overlay-container').find('.tooltip-static').hide()
+      // var len=document.getElementsByClassName('ol-overlay-container ol-selectable').length
+      // for(var i=0;i<=len;i++){
+      //   if(document.getElementsByClassName('ol-overlay-container ol-selectable')[0]){
+      //     document.getElementsByClassName('ol-overlay-container ol-selectable')[0].remove();
+      //   }
+      // }
+    }
+
+
+
+    var vectorDraw = new ol.layer.Vector({
+      source: sourceDraw,
+      style: new ol.style.Style({
+        fill: new ol.style.Fill({
+          color: 'rgba(255, 255, 255, 0.2)'
+        }),
+        stroke: new ol.style.Stroke({
+          color: '#ffcc33',
+          width: 2
+        }),
+        image: new ol.style.Circle({
+          radius: 7,
+          fill: new ol.style.Fill({
+            color: '#ffcc33'
+          })
+        })
+      })
+    });
+
+
+
+
+    /**
+         * Currently drawn feature.
+         * @type {ol.Feature}
+         */
+    var sketch;
+
+
+    /**
+     * The help tooltip element.
+     * @type {Element}
+     */
+    var helpTooltipElement;
+
+
+    /**
+     * Overlay to show the help messages.
+     * @type {ol.Overlay}
+     */
+    var helpTooltip;
+
+
+    /**
+     * The measure tooltip element.
+     * @type {Element}
+     */
+    var measureTooltipElement;
+
+
+    /**
+     * Overlay to show the measurement.
+     * @type {ol.Overlay}
+     */
+    var measureTooltip;
+
+
+    /**
+     * Message to show when the user is drawing a polygon.
+     * @type {string}
+     */
+    var continuePolygonMsg = 'Click to continue drawing the polygon';
+
+    var draw; // global so we can remove it later
+    var continueLineMsg = 'Click to continue drawing the line';
+    function addInteraction() {
+
+      /**
+       * Message to show when the user is drawing a line.
+       * @type {string}
+       */
+
+      var type = 'LineString'//(typeSelect.value == 'area' ? 'Polygon' : 'LineString');
+      draw = new ol.interaction.Draw({
+        source: sourceDraw,
+        type: type,
+        style: new ol.style.Style({
+          fill: new ol.style.Fill({
+            color: 'rgba(255, 255, 255, 0.2)'
+          }),
+          stroke: new ol.style.Stroke({
+            color: 'rgba(0, 0, 0, 0.5)',
+            lineDash: [10, 10],
+            width: 2
+          }),
+          image: new ol.style.Circle({
+            radius: 5,
+            stroke: new ol.style.Stroke({
+              color: 'rgba(0, 0, 0, 0.7)'
+            }),
+            fill: new ol.style.Fill({
+              color: 'rgba(255, 255, 255, 0.2)'
+            })
+          })
+        })
+      });
+      map.addInteraction(draw);
+
+      createMeasureTooltip();
+      createHelpTooltip();
+
+      var listener;
+      draw.on('drawstart',
+        function (evt) {
+          // set sketch
+          sketch = evt.feature;
+
+          /** @type {ol.Coordinate|undefined} */
+          var tooltipCoord = evt.coordinate;
+
+          listener = sketch.getGeometry().on('change', function (evt) {
+            var geom = evt.target;
+            var output;
+            output = formatLength(geom);
+            //console.log(output)
+            tooltipCoord = geom.getLastCoordinate();
+            measureTooltipElement.innerHTML = output;
+            measureTooltip.setPosition(tooltipCoord);
+          });
+        }, this);
+
+      draw.on('drawend',
+        function (e) {
+          measureTooltipElement.className = 'tooltip tooltip-static';
+          measureTooltip.setOffset([0, -7]);
+          // unset sketch
+          sketch = null;
+          // unset tooltip so that a new one can be created
+          measureTooltipElement = null;
+          createMeasureTooltip();
+          ol.Observable.unByKey(listener);
+
+        }, this);
+
+      /**
+* Creates a new help tooltip
+*/
+      function createHelpTooltip() {
+        if (helpTooltipElement) {
+          helpTooltipElement.parentNode.removeChild(helpTooltipElement);
+        }
+        helpTooltipElement = document.createElement('div');
+        helpTooltipElement.className = 'tooltip hidden';
+        helpTooltip = new ol.Overlay({
+          element: helpTooltipElement,
+          offset: [15, 0],
+          positioning: 'center-left'
+        });
+        map.addOverlay(helpTooltip);
+
+      }
+
+
+      /**
+       * Creates a new measure tooltip
+       */
+      function createMeasureTooltip() {
+        if (measureTooltipElement) {
+          measureTooltipElement.parentNode.removeChild(measureTooltipElement);
+        }
+        measureTooltipElement = document.createElement('div');
+        measureTooltipElement.className = 'tooltip tooltip-measure';
+        measureTooltip = new ol.Overlay({
+          element: measureTooltipElement,
+          offset: [0, -15],
+          positioning: 'bottom-center'
+        });
+        map.addOverlay(measureTooltip);
+      }
+
+      var pointerMoveHandler = function (evt) {
+        if (evt.dragging) {
+          return;
+        }
+        /** @type {string} */
+        var helpMsg = 'Click to start drawing';
+
+        if (sketch) {
+          var geom = (sketch.getGeometry());
+          if (geom instanceof ol.geom.Polygon) {
+            helpMsg = continuePolygonMsg;
+          } else if (geom instanceof ol.geom.LineString) {
+            helpMsg = continueLineMsg;
+          }
+        }
+        //console.log(helpMsg)
+        helpTooltipElement.innerHTML = helpMsg;
+
+        helpTooltip.setPosition(evt.coordinate);
+
+        helpTooltipElement.classList.remove('hidden');
+      };
+      map.on('pointermove', pointerMoveHandler);
+
+      map.getViewport().addEventListener('mouseout', function () {
+        helpTooltipElement.classList.add('hidden');
+      });
+
+      var typeSelect = document.getElementById('type');
+
+
+
+
+      /**
+       * Format length output.
+       * @param {ol.geom.LineString} line The line.
+       * @return {string} The formatted length.
+       */
+      var formatLength = function (line) {
+        var length = ol.Sphere.getLength(line);
+        var output;
+        if (length > 100) {
+          output = (Math.round(length / 1000 * 100) / 100) +
+            ' ' + 'km';
+        } else {
+          output = (Math.round(length * 100) / 100) +
+            ' ' + 'm';
+        }
+        return output;
+      };
+
+
+      /**
+       * Format area output.
+       * @param {ol.geom.Polygon} polygon The polygon.
+       * @return {string} Formatted area.
+       */
+      var formatArea = function (polygon) {
+        var area = ol.Sphere.getArea(polygon);
+        var output;
+        if (area > 10000) {
+          output = (Math.round(area / 1000000 * 100) / 100) +
+            ' ' + 'km<sup>2</sup>';
+        } else {
+          output = (Math.round(area * 100) / 100) +
+            ' ' + 'm<sup>2</sup>';
+        }
+        return output;
+      };
+    }
+
+
+
+
+
+
+
+
+
+    startBuffer()
+    var helpTooltipElementNew;
+    var helpTooltipNew;
+
+
+    /**
+     * The measure tooltip element.
+     * @type {Element}
+     */
+    //var measureTooltipElement;
+
+
+    /**
+     * Overlay to show the measurement.
+     * @type {ol.Overlay}
+     */
+    var measureTooltip;
+    function startBuffer() {
+
+      if (flag == 0) {
+        createHelpTooltip()
+
+        var pointerMoveHandlerNew = function (evt) {
+          if (continueLineMsg != undefined) {
+            if (evt.dragging) {
+              return;
+            }
+            /** @type {string} */
+            var helpMsg = 'Click on the Map to pick a location on the Map.';
+
+            if (sketch) {
+              var geom = (sketch.getGeometry());
+              if (geom instanceof ol.geom.Polygon) {
+                helpMsg = continuePolygonMsg;
+              } else if (geom instanceof ol.geom.LineString) {
+                helpMsg = continueLineMsg;
+              }
+            }
+            //console.log(helpMsg)
+            helpTooltipElementNew.innerHTML = helpMsg;
+
+            helpTooltipNew.setPosition(evt.coordinate);
+
+            helpTooltipElementNew.classList.remove('hidden');
+          }
+
+        };
+
+        map.on('pointermove', pointerMoveHandlerNew);
+
+        map.getViewport().addEventListener('mouseout', function () {
+          helpTooltipElement.classList.add('hidden');
+        });
+      }
+
+    }
+
+
+    function createHelpTooltip() {
+      if (helpTooltipElementNew) {
+        helpTooltipElementNew.parentNode.removeChild(helpTooltipElementNew);
+      }
+      helpTooltipElementNew = document.createElement('div');
+      helpTooltipElementNew.className = 'tooltip hidden';
+      helpTooltipNew = new ol.Overlay({
+        element: helpTooltipElementNew,
+        offset: [15, 0],
+        positioning: 'center-left'
+      });
+      map.addOverlay(helpTooltipNew);
+
+    }
+
+
+
+    function myFunction() {
+      $(element).popover("destroy");
+    }
+
+
+  </script>
+  <script>
+    var regionVal = "";
+    var zoneVal = "";
+    var woridaVal = "";
+    var regionText = "";
+    var zoneText = "";
+    var woridaText = "";
+    //Populating dropdown 
+    //Populates upon page loading
+    $("#selRegion").change(function () {
+      map.removeLayer(vectorLayer12);
+      regionText = "";
+      zoneText = "";
+      woridaText = "";
+      regionVal = "";
+      zoneVal = "";
+      woridaVal = "";
+      $("#selZone").html("");
+      $("#selWorida").html("");
+      $("#selZone").append('<option value="">--Select Zone--</option>');
+      $("#selWorida").append('<option value="">--Select Worida--</option>');
+      $(element).popover("destroy");
+      regionText = $("#selRegion :selected").text();
+      regionVal = $("#selRegion").val();
+      if (regionVal != "") {
+        map.removeLayer(wmsSchoolSource);
+        wmsSchoolSource = new ol.layer.Image({
+          source: new ol.source.ImageWMS({
+            url: "http://192.168.10.45:8080/geoserver/wms",
+            params: { LAYERS: "ETH_SCHOOL:overlay_secondary_school", "CQL_FILTER": "region='" + regionText + "'" },
+            serverType: "geoserver",
+            crossOrigin: "anonymous"
+          })
+        });
+        setMapExtent()
+        callZone();
+        map.addLayer(wmsSchoolSource);
+      } else {
+        map.removeLayer(wmsSchoolSource);
+        wmsSchoolSource = new ol.layer.Image({
+          source: new ol.source.ImageWMS({
+            url: "http://192.168.10.45:8080/geoserver/wms",
+            params: { LAYERS: "ETH_SCHOOL:overlay_secondary_school" },
+            serverType: "geoserver",
+            crossOrigin: "anonymous"
+          })
+        });
+        setMapExtent()
+        map.addLayer(wmsSchoolSource);
+        regionText = "";
+        zoneText = "";
+        woridaText = "";
+        regionVal = "";
+        zoneVal = "";
+        woridaVal = "";
+      }
+    });
+
+    //Populates upon changing in Region
+    $("#selZone").change(function () {
+      map.removeLayer(vectorLayer12);
+      zoneText = "";
+      woridaText = "";
+      zoneVal = "";
+      woridaVal = "";
+      $("#selWorida").html("");
+      $("#selWorida").append('<option value="">--Select Worida--</option>');
+      $(element).popover("destroy");
+      zoneText = $("#selZone :selected").text();
+      zoneVal = $("#selZone").val();
+      if (zoneVal != "") {
+        setMapExtent()
+        callWorida();
+      } else {
+        zoneText = "";
+        woridaText = "";
+        zoneVal = "";
+        woridaVal = "";
+        setMapExtent()
+      }
+    });
+
+    //Populates upon changing in selZone
+    $("#selWorida").change(function () {
+      map.removeLayer(vectorLayer12);
+      woridaText = "";
+      woridaVal = "";
+      $(element).popover("destroy");
+      woridaText = $("#selWorida :selected").text();
+      woridaVal = $("#selWorida").val();
+      if (woridaVal != "") {
+        setMapExtent()
+      } else {
+        setMapExtent()
+        woridaText = "";
+        woridaVal = "";
+      }
+    });
+    var regionMasterData;
+    function callRegion() {
+      $.ajax({
+        url: "http://192.168.10.45:3001/loadRegion",
+        type: "POST",
+        dataType: "json",
+        data: {},
+        success: function (data, textStatus, xhr) {
+          regionMasterData = data;
+          //console.log(data)
+          $("#selRegion").html("");
+          var campHtml = '<option value="">--Select Region--</option>';
+          for (var i = 0; i < regionMasterData.msg.length; i++) {
+            campHtml +=
+              '<option value="' +
+              regionMasterData.msg[i].id +
+              '">' +
+              regionMasterData.msg[i].name +
+              "</option>";
+          }
+          $("#selRegion").append(campHtml);
+          //updateWMSLayer()
+        },
+        error: function (xhr, textStatus, errorThrown) {
+          console.log("Error in Operation");
+        }
+      });
+    }
+    function callZone() {
+      $.ajax({
+        url: "http://192.168.10.45:3001/loadZone",
+        type: "POST",
+        dataType: "json",
+        data: { region: regionVal, regionName: regionText },
+        success: function (data, textStatus, xhr) {
+          //console.log(data)
+          zoneMasterData = data;
+          $("#selZone").html("");
+          var campHtml = '<option value="">--Select Zone--</option>';
+          for (var i = 0; i < zoneMasterData.msg.length; i++) {
+            campHtml +=
+              '<option value="' +
+              zoneMasterData.msg[i].id +
+              '">' +
+              zoneMasterData.msg[i].name +
+              "</option>";
+          }
+          $("#selZone").append(campHtml);
+          //updateWMSLayer()
+        },
+        error: function (xhr, textStatus, errorThrown) {
+          console.log("Error in Operation");
+        }
+      });
+    }
+    var woridaMasterData;
+    function callWorida() {
+      $.ajax({
+        url: "http://192.168.10.45:3001/loadWorida",
+        type: "POST",
+        dataType: "json",
+        data: { region: regionVal, zone: zoneVal, regionName: regionText, zoneName: zoneText },
+        success: function (data, textStatus, xhr) {
+          woridaMasterData = data;
+          $("#selWorida").html("");
+          var campHtml = '<option value="">--Select Worida--</option>';
+          for (var i = 0; i < woridaMasterData.msg.length; i++) {
+            campHtml +=
+              '<option value="' +
+              woridaMasterData.msg[i].id +
+              '">' +
+              woridaMasterData.msg[i].name +
+              "</option>";
+          }
+          $("#selWorida").append(campHtml);
+          //updateWMSLayer()
+        },
+        error: function (xhr, textStatus, errorThrown) {
+          console.log("Error in Operation");
+        }
+      });
+    }
+
+
+
+    //setMapExtent method 
+    function setMapExtent() {
+      if (regionVal != '' && zoneVal == '' && woridaVal == '') {
+        for (var i = 0; i < regionMasterData.msg.length; i++) {
+          if (regionText == regionMasterData.msg[i].name) {
+            if (regionMasterData.msg[i].long == null) {
+              /****Old*****/
+              // zoomVal = 6
+              // view.setCenter(
+              //   ol.proj.transform([38.763611, 9.005401], "EPSG:4326", "EPSG:3857")
+              // );
+              // view.setZoom(zoomVal);
+
+              /****New*****/
+              zoomVal = 6
+              view.animate({
+                center: ol.proj.transform([38.763611, 9.005401], "EPSG:4326", "EPSG:3857"),
+                duration: 2000,
+                zoom: zoomVal
+              });
+            }
+            else {
+              /****Old*****/
+              // zoomVal = 12
+              // view.setCenter(
+              //   ol.proj.transform([regionMasterData.msg[i].long, regionMasterData.msg[i].lat], "EPSG:4326", "EPSG:3857")
+              // );
+              // view.setZoom(zoomVal);
+
+              /****New*****/
+              zoomVal = 12
+              view.animate({
+                center: ol.proj.transform([regionMasterData.msg[i].long, regionMasterData.msg[i].lat], "EPSG:4326", "EPSG:3857"),
+                duration: 2000,
+                zoom: zoomVal
+              });
+            }
+
+          }
+        }
+      }
+      else if (regionVal != '' && zoneVal != '' && woridaVal == '') {
+        for (var i = 0; i < zoneMasterData.msg.length; i++) {
+          if (zoneText == zoneMasterData.msg[i].name) {
+
+            if (zoneMasterData.msg[i].long == null) {
+              /*******Old******/
+              // zoomVal = 6
+              // view.setCenter(
+              //   ol.proj.transform([38.763611, 9.005401], "EPSG:4326", "EPSG:3857")
+              // );
+              // view.setZoom(zoomVal);
+
+              /****New*****/
+              zoomVal = 6;
+              view.animate({
+                center: ol.proj.transform([38.763611, 9.005401], "EPSG:4326", "EPSG:3857"),
+                duration: 2000,
+                zoom: zoomVal
+              });
+            }
+            else {
+              /*******Old******/
+              // zoomVal = 13
+              // view.setCenter(
+              //   ol.proj.transform([zoneMasterData.msg[i].long, zoneMasterData.msg[i].lat], "EPSG:4326", "EPSG:3857")
+              // );
+              // view.setZoom(zoomVal);
+
+
+              /****New*****/
+              zoomVal = 13;
+              view.animate({
+                center: ol.proj.transform([zoneMasterData.msg[i].long, zoneMasterData.msg[i].lat], "EPSG:4326", "EPSG:3857"),
+                duration: 1500,
+                zoom: zoomVal
+              });
+
+            }
+
+          }
+        }
+      }
+      else if (regionVal != '' && zoneVal != '' && woridaVal != '') {
+        for (var i = 0; i < woridaMasterData.msg.length; i++) {
+          if (woridaText == woridaMasterData.msg[i].name) {
+            if (woridaMasterData.msg[i].long == null) {
+              /*******Old******/
+              // zoomVal = 6
+              // view.setCenter(
+              //   ol.proj.transform([38.763611, 9.005401], "EPSG:4326", "EPSG:3857")
+              // );
+              // view.setZoom(zoomVal);
+
+              /****New*****/
+              zoomVal = 6
+              view.animate({
+                center: ol.proj.transform([38.763611, 9.005401], "EPSG:4326", "EPSG:3857"),
+                duration: 2000,
+                zoom: zoomVal
+              });
+            }
+            else {
+              // zoomVal = 15
+              // view.setCenter(
+              //   ol.proj.transform([woridaMasterData.msg[i].long, woridaMasterData.msg[i].lat], "EPSG:4326", "EPSG:3857")
+              // );
+              // view.setZoom(zoomVal);
+
+              /****New*****/
+              zoomVal = 15;
+              view.animate({
+                center: ol.proj.transform([woridaMasterData.msg[i].long, woridaMasterData.msg[i].lat], "EPSG:4326", "EPSG:3857"),
+                duration: 1000,
+                zoom: zoomVal
+              });
+            }
+
+          }
+        }
+      }
+      else {
+        /*******Old******/
+        // zoomVal = 6
+        // view.setCenter(
+        //   ol.proj.transform([38.763611, 9.005401], "EPSG:4326", "EPSG:3857")
+        // );
+        // view.setZoom(zoomVal);
+
+        /****New*****/
+        zoomVal = 6
+        view.animate({
+          center: ol.proj.transform([38.763611, 9.005401], "EPSG:4326", "EPSG:3857"),
+          duration: 2000,
+          zoom: zoomVal
+        });
+      }
+    }
+
+
+    //dragging result
+    $(function () {
+      $("#draggable").draggable();
+    });
+
+  </script>
+
+  <!-- Modal -->
+  <div id="aboutconten" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title"> About ETH School Mapping </h4>
+        </div>
+        <div class="modal-body">
+          <p>The World Bank education team in Ethiopia seeks the professional services of a firm specializing in GIS
+            analysis to develop school maps for Ethiopia. The school mapping exercise will serve as an input in
+            determining where, when, and what type of schools to construct by the Federal Ministry of Education,
+            Regional Education Bureaus, Zonal and Woreda Education offices. Hence, school construction can be based on
+            objective measures. </p>
+          <br>
+          <p> The proposed analysis will utilize GIS methods using spatial (geo-referenced) and non-spatial attribute
+            data. A census of all schools (pre-primary (O-class) up to secondary schools including private, public,
+            etc.) in Ethiopia will be conducted to collect location coordinates and other school-level administration
+            data. Secondary data from previous surveys such as the Demographic and Health Surveys (DHS); Household,
+            Income, and Consumption Expenditure (HICE); and World Banks’ Living Standards Measurement Surveys (LSMS)
+            for
+            Ethiopia will be utilized to complement the survey. Ministry of Education also has GIS data for many
+            schools, approximately 60 to 70 percent of all public schools. While some of the data are obsolete, a
+            selected firm may be able to make use of the available data to increase efficiency of data collection. The
+            usage of the GIS data available in the Ministry should be approved by the Ministry.</p>
+          <br>
+          <p> The proposed analysis will provide a broad overview of the current school distribution, the synergy in
+            the
+            distribution of primary and secondary schools, and picture of the state of education resources allocation
+            by
+            developing and launching a spatial dataset with a graphic and visual web interface It will also identify
+            potential channels of influence and partners for engagement to achieve equity and quality in the education
+            sector in Ethiopia. </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="myModalSchoolDtl" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+              aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel"></h4>
+        </div>
+        <div class="modal-body">
+          <div id="scholDetalmodal">
+            <div class="col-sm-6">
+              <div class="school-slider">
+                <div class="item active" id="divimg1">
+                  <!-- <img src="images/Gulen-schools4.jpg" id="img1" alt="Gulen School"> -->
+                  <div class="item active" id="divimg1">
+                    <img id="img1" alt="Gulen School" style="object-fit: cover;
+                          max-height: 307px;
+                          width: 100%;
+                          display: block;
+                          margin: 0px auto;">
+
+                  </div>
+
+                </div>
+                <!-- <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+                <ol class="carousel-indicators hideList">
+                <li data-target="#carousel-example-generic" data-slide-to="0" class="active" id="scroll1"></li>
+                <li data-target="#carousel-example-generic" data-slide-to="1" id="scroll2"></li>
+                
+                </ol>
+      
+                <div class="carousel-inner" role="listbox">
+                <div class="item active" id="divimg1">
+                  <img src="images/Gulen-schools4.jpg" id="img1" alt="Gulen School">
+                  
+                </div>
+                <div class="item" id="divimg2">
+                  <img src="images/Gulen-schools4.jpg" id="img2" alt="Gulen School">
+                  
+                </div>
+                </div>
+      
+                <a class="left carousel-control hideList" href="#carousel-example-generic" role="button" data-slide="prev">
+                <i class="fa fa-angle-left" aria-hidden="true"></i>
+                <span class="sr-only">Previous</span>
+                </a>
+                <a class="right carousel-control hideList" href="#carousel-example-generic" role="button" data-slide="next">
+                <i class="fa fa-angle-right" aria-hidden="true"></i>
+                <span class="sr-only">Next</span>
+                </a>
+              </div>   -->
+              </div>
+            </div>
+            <div class="col-sm-6 p-l-0">
+              <div class="school-map">
+                <div id="map1" style="height: 307px"></div>
+              </div>
+            </div>
+            <div class="clearfix"></div>
+          </div>
+          <div class="schooldetailsec">
+            <table id="tblData" class="table table-striped" cellpadding="2" cellspacing="0" border="0">
+
+            </table>
+            <!--<h3>School Name : <small>Ai International School </small></h3>
+            <h3>Region Name : <small>Addis Ababa Central </small></h3>
+              <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged</p>-->
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <script src="js/custom.js"></script>
+</body>
+
+</html>

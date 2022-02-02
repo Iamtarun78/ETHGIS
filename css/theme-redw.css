@@ -1,0 +1,208 @@
+a {
+    color: #d32f2f;
+}
+a:focus, a:hover {
+	color: #000000;
+	}
+.header {
+  
+border-top: 2px solid #e63e3e;
+}
+.header .navbar-default {
+    background: #d32f2f;
+}
+.menubtn {
+   
+background: rgb(230, 62, 62);
+}.header .navbar-nav li a {
+   
+background: #d32f2f;   
+color: #e2e2e1;
+}
+.header .navbar-nav li a:hover, .header .navbar-nav li a:focus {
+    background: rgb(230, 62, 62);
+    color: #f3f3f3;
+}
+.header .logo h1 small {
+    
+    color: #ffbbbb;
+}
+.setting-btn {
+   
+background: #e63e3e;
+}.settingbody {
+   
+border-left: 4px solid #e63e3e;
+}.page-container:after {
+   
+background: #d32f2f;
+   
+border-top: 1px solid #e63e3e;
+}
+.sidemenu {
+   
+    background: #ffffff;
+    box-shadow: 0px 4px 10px #cecece;
+    
+}
+.header .breadcrumb li a {
+    color: #dcdfe2;
+}
+.sidemenu .profile-details {
+  
+    background: #ffffff;
+}
+.sidemenu .profile-details h4 {
+    color: #6d6d6d;
+   
+}
+.sidemenu .profile-details span {
+   
+color: #000000;
+}
+.sidemenu .profile-menu {
+   
+    background: #ececec;
+}
+.profile-menu ul li a {
+  
+    color:#2f2f2f;
+}
+.profile-menu ul li a:hover, .profile-menu ul li a:focus {
+    color: #d32f2f;
+}
+.side-nav-list>li>a {
+   
+    background-color: #ffffff;
+    color: #2f2f2f;
+    border-left: 3px solid #ffffff;
+    
+}
+.side-nav-list>li>a:hover {
+    color: #d32f2f;
+}
+.side-nav-list>li.active>a, .side-nav-list>li.active>a:hover, .side-nav-list>li.active>a:focus, .side-nav-list>li.active>a:active {
+    background-color: #e63e3e;
+    color: #ffffff;
+}
+.side-nav-list>li.active a {
+    border-left: 3px solid #d41616;
+}.header .breadcrumb {
+  
+background: rgb(230, 62, 62);
+}
+.header .breadcrumb:before {
+   
+border-color: transparent transparent rgba(249, 79, 79, 0.49)transparent;
+}
+.side-nav-list>li .submenu {
+   
+    background-color:#f7f7f7;
+   
+}
+.side-nav-list>li.active .submenu{box-shadow: none;}
+.side-nav-list>li .submenu>li>a {
+   
+    color: #4a4a4a;
+  
+}
+.side-nav-list>li .submenu>li>a:hover {
+     color: #d32f2f;
+}
+.side-nav-list>li .submenu>li.active>a {
+    color: #d32f2f;
+}
+.formpage .panel {
+   
+    box-shadow: 0px 0px 10px #cecece;
+  
+}
+.nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
+    color: #d32f2f;
+    border-bottom: 4px solid #d32f2f!important;
+}
+.pagination > .active > a, .pagination > .active > span, .pagination > .active > a:hover, .pagination > .active > span:hover, .pagination > .active > a:focus, .pagination > .active > span:focus {
+   
+color: #ffffff;
+   
+background-color: #d32f2f;
+   
+border-color: #d32f2f;
+}
+legend {
+  
+color: #d32f2f;
+}
+.search-sec {
+   
+background: #ffe9e9;
+   
+border-bottom: 3px solid #ff8d8d;
+}
+.searchopen {
+  
+background: #ff8d8d;
+  
+color: #ffffff;
+  
+border: 1px solid #ff8d8d;
+}
+.searchopen:hover {
+    background: #e63e3e;
+    color: #fff;
+}
+.indicatorslist a:hover {
+    color: #d32f2f;
+    border: 1px solid #d32f2f;
+}
+.header .navbar-nav li .dropdown-menu .notifications li a:hover, .header .navbar-nav li .dropdown-menu .notifications li a:focus {
+    color: #d32f2f;
+}
+.nav-tabs > li.active > a, .nav-tabs > li > a:hover {
+   
+color: #d32f2f!important;
+   
+border-bottom: 4px solid #d32f2f!important;
+}
+.nav-tabs > li > a::after {
+   
+background: #e63e3e;
+   
+}
+.playerprofile img {
+    
+border: 2px solid #e63e3e;
+}
+.formpage .accorodion-panel {
+	box-shadow: none;}
+
+.header .breadcrumb li.active {
+    color: #c7c7c7;
+}
+.breadcrumb>li+li:before {
+    color: #c7c7c7;
+}.sidemenu .profile-details.active .designation, .sidemenu .profile-details.active .location {
+   
+    color: #717171;
+    background: rgba(0, 0, 0, 0);
+   
+}
+.side-nav-list>li.arrow-up:after {
+   
+    border-right: 1px solid #fff;
+    border-bottom: 1px solid #fff;
+   
+}
+.acivements .acivelist{
+    
+    border-left: 2px solid #d32f2f;
+}
+.acivements .acivelist .icondiv{
+   
+    color: #d32f2f;
+}
+.activement-card .details a {
+  
+    background: #d32f2f;
+  
+}

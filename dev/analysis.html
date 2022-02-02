@@ -1,0 +1,2818 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>World Bank School Mapping and Analysis</title>
+    <meta name="keywords" content="ADSYS" />
+    <meta name="description" content="ADSYS" />
+    <!-- <link rel="shortcut icon" href="javascript:void(0);" type="image/x-icon" /> -->
+    <link href="css/bootstrap.min.css" rel="stylesheet" />
+    <link href="css/font-awesome.min.css" rel="stylesheet" />
+    <link href="css/animate.css" rel="stylesheet" />
+    <link href="css/jquery.mCustomScrollbar.min.css" rel="stylesheet" />
+    <link href="css/icons.css" rel="stylesheet" />
+    <link href="css/map-style.css" rel="stylesheet" />
+    <link href="css/site.css" rel="stylesheet" />
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+    <script src="js/jquery-2.1.1.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/bootstrap-datepicker.min.js"></script>
+    <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    <!-- Include Openlayers API -->
+    <link rel="stylesheet" href="https://openlayers.org/en/v4.6.5/css/ol.css" type="text/css" />
+    <link rel="stylesheet" href="https://unpkg.com/ol-popup@4.0.0/src/ol-popup.css" />
+    <!-- The line below is only needed for old environments like Internet Explorer and Android 4.x -->
+    <script
+        src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
+
+    <script src="https://openlayers.org/en/v4.6.5/build/ol.js"></script>
+    <script src="https://unpkg.com/ol-popup@4.0.0"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.2.61/jspdf.min.js"></script>
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--for meterial icon used for pan button in this application-->
+    <style>
+        #marker {
+            width: 20px;
+            height: 20px;
+            border: 1px solid #088;
+            border-radius: 10px;
+            background-color: #0ff;
+            opacity: 0.5;
+        }
+
+        #vienna {
+            text-decoration: none;
+            color: white;
+            font-size: 11pt;
+            font-weight: bold;
+            text-shadow: black 0.1em 0.1em 0.2em;
+        }
+
+        .popover-content {
+            min-width: 180px;
+        }
+
+        .tooltip {
+            position: relative;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 4px;
+            color: white;
+            padding: 4px 8px;
+            opacity: 0.7;
+            white-space: nowrap;
+        }
+
+        .tooltip-measure {
+            opacity: 1;
+            font-weight: bold;
+        }
+
+        .tooltip-static {
+            background-color: #ffcc33;
+            color: black;
+            border: 1px solid white;
+        }
+
+        .tooltip-measure:before,
+        .tooltip-static:before {
+            border-top: 6px solid rgba(0, 0, 0, 0.5);
+            border-right: 6px solid transparent;
+            border-left: 6px solid transparent;
+            content: "";
+            position: absolute;
+            bottom: -6px;
+            margin-left: -7px;
+            left: 50%;
+        }
+
+        .tooltip-static:before {
+            border-top-color: #ffcc33;
+        }
+
+        #cstTab .magic-radio+label:before,
+        #cstTab .magic-checkbox+label:before {
+            right: 7px;
+            top: 3px;
+            left: auto;
+        }
+
+        #cstTab .magic-radio+label:not(:empty),
+        #cstTab .magic-radio+label:not(:empty),
+        #cstTab .magic-checkbox+label:not(:empty) {
+            margin: 0 2px 5px 1px;
+            text-indent: 12px;
+            font-size: .9em;
+        }
+
+        #cstTab .magic-checkbox+label:after {
+            border-color: #fff;
+            border-style: solid;
+            border-width: 0 2px 2px 0;
+            box-sizing: border-box;
+            height: 13px;
+            left: auto;
+            right: 12px;
+            top: 3px;
+            transform: rotate(48deg);
+            width: 6px;
+        }
+
+        #cstTab .magic-radio:checked+label:after,
+        #cstTab .magic-checkbox:checked+label:after {
+            display: block;
+        }
+
+        /*#cstTab input[type=checkbox], #cstTab input[type=radio] {    margin: 6px 7px 0 7px; display: inline-block;}*/
+    </style>
+    <style>
+        .map {
+            height: 550px;
+            width: 100%;
+            position: relative;
+        }
+
+        .header-right .row {
+            margin: 10px 0px;
+        }
+
+        .header-right {
+            margin-right: 20px;
+        }
+
+        .header-right .row .searchIconm {
+            padding: 5px;
+            display: block;
+            width: 35px;
+            background-color: rgb(15, 15, 94);
+        }
+
+        .col-md-10,
+        .col-md-2 {
+            padding: 0px !important;
+        }
+
+        .ol-popup-content {
+            overflow: hidden !important;
+        }
+
+        .floatingArea {
+            display: none;
+        }
+
+        .floatingArea li a span img {
+            width: 65px;
+            height: 45px;
+            overflow: hidden;
+            padding-right: 10px;
+        }
+
+        .floatingArea ul li a {
+            height: auto;
+            padding: 8px 4px 10px 8px;
+        }
+
+        .floatingArea a.closIcon {
+            top: 0px;
+        }
+
+        .modal-header {
+            background: #0c4475;
+        }
+
+        .plus {
+            position: absolute;
+            margin-left: 10px;
+            top: -1px;
+            left: -3px;
+            z-index: 5;
+            font-size: 2em;
+            line-height: inherit;
+            width: 18px;
+        }
+
+        .plus:hover {
+            cursor: pointer;
+        }
+
+        .showhidediv {
+            height: auto;
+            display: block;
+            opacity: 1;
+            padding: 10px 5px 17px 5px;
+        }
+
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 9px;
+            border-radius: 5px;
+            background: #85aff5;
+            outline: none;
+            opacity: 0.8;
+            -webkit-transition: .3s;
+            transition: opacity .3s;
+            margin-bottom: 10px;
+        }
+
+        /*.slider:hover {
+  opacity: 1;
+}*/
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #1744bb;
+            cursor: pointer;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #1744bb;
+            cursor: pointer;
+        }
+
+        .layer-box .div-content input {
+            margin-top: 0px;
+        }
+
+
+
+        .modal-title {
+            color: #fff;
+        }
+
+        .legendHead {
+            background-color: #e6e6ff;
+            padding: 2px 5px 2px 5px;
+            box-shadow: 0px 0px 3px black;
+        }
+
+        .icons a {
+            color: white;
+        }
+
+        .icons a:hover {
+            text-shadow: 0px 0px 10px white;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div id="loaderPage">
+        <img src="images/loader.gif" alt="Odisha Govt. Logo" />
+    </div>
+    <!--===Header===-->
+    <div class="print-header">
+        <h1>WB-ET-School Mapping <small>Government of Ethiopia</small></h1>
+        <div class="clrboth"></div>
+    </div>
+    <div class="header">
+        <nav class="navbar navbar-default">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <div class="logo-sec">
+                    <div class="logo">
+                        <img src="images/etgovlogo.png" alt="Odisha Govt. Logo" />
+                        <h1>ETH School Mapping<small>Government of Ethiopia</small></h1>
+                    </div>
+                    <div id="toggle" class="menubtn">
+                        <div class="one"></div>
+                        <div class="two"></div>
+                        <div class="three"></div>
+                    </div>
+                </div>
+            </div>
+
+            <ul class="nav navbar-nav navbar-left">
+                <li></li>
+                <li>
+                    <a href="javascript:void(0);" data-toggle="dropdown" class="dropdown-toggle">Report <span
+                            class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" id="cstTab">
+              <li>
+                <a href="index.html" title="" name="disSchool" id="linkIndex"
+                  >Distribution of Schools
+                </a>
+              </li>
+              <li>
+                <a href="buffer.html" title="" name="disSchool" id="linkBuffer"
+                  >Schools’ Buffer Analysis</a
+                >
+              </li>
+              <li>
+                <a href="toilet.html" title="" name="toiletFaci" id="linkToilet"
+                  >Schools Having Toilet Facilities</a
+                >
+              </li>
+              <li>
+                <a href="sector.html" title="" name="schoolSec" id="linkSector"
+                  >View Schools by Grade</a
+                >
+              </li>
+			  <li>
+              <a href="analysis.html" title="" id="linkAnalysis" name="schPotentAnalysis">Identification of Potential School Sites</a>
+            </li>
+            </ul>
+                </li>
+
+                <!-- <li><a href="javascript:void(0);" title="">3D <span class="caret"></span>  </a></li> -->
+                <li><a href="javascript:void(0);" title="" data-toggle="modal" data-target="#aboutconten">About </a>
+                </li>
+            </ul>
+            <div class="pull-right header-right m-l-10"></div>
+            <ul class="nav navbar-nav navbar-right">
+                <!--Option menu for viewing eth zone and roads-->
+
+                <!--Removed view object tooltips-->
+                <!-- <li>
+          <a href="javascript:void(0);" id="layerClick" class="dropdown-toggle " title="View Object"><img
+              src="images/layer.png" alt="Full Screen icon">
+          </a>
+
+        </li> -->
+
+
+                <li>
+                    <a href="javascript:void(0);" data-toggle="tooltip" data-placement="bottom" title="Measurment"
+                        id="draw"><img src="images/meserment.png" alt="Meserment  icon" />
+                    </a>
+                </li>
+                 <li>
+            <a
+              href="javascript:void(0);"
+              data-toggle="tooltip"
+              data-placement="bottom"
+              title="Rotate Map"
+              ><img src="images/rotate-map.png" alt="Rotate Map icon" />
+            </a>
+          </li> 
+                <li>
+                    <a href="javascript:void(0);" data-toggle="tooltip" data-placement="bottom" title="Home"
+                        id="home"><img src="images/home.png" alt="Plus icon" />
+                    </a>
+                </li>
+                <!-- <li>
+            <a
+              href="javascript:void(0);"
+              data-toggle="tooltip"
+              data-placement="bottom"
+              title="ZoomIn"
+              id="zoomPlus"
+              <a
+              href="javascript:void(0);"
+              data-toggle="tooltip"
+              data-placement="bottom"
+              title="ZoomOut"
+              id="zoomMinus"
+              ><img src="images/minus.png" alt="Minus icon" />
+            </a>
+          </li> -->
+                <li>
+                    <a href="javascript:void(0);" data-toggle="tooltip" data-placement="bottom" title="Full Screen"
+                        id="fullScrn"><img src="images/full-screen.png" alt="Full Screen icon" />
+                    </a>
+                </li>
+                <!--<li>
+          <a href="javascript:void(0);" data-toggle="tooltip" data-placement="bottom" title="Basemap" id="mapimg"><img
+              src="images/basemap.png" alt="Basemap icon" />
+          </a>
+        </li>-->
+                <!-- <li>
+          <a href="javascript:void(0);" data-toggle="tooltip" data-placement="bottom" title="Export to Excel"
+            id="dvjson"><img src="images/excel.png" alt="Export to Excel icon" />
+          </a>
+        </li> -->
+                <li>
+                    <a href="javascript:void(0);" data-toggle="tooltip" data-placement="bottom" title="Print PDF Map"
+                        id="printMap"><img src="images/pdf.png" alt="Print PDF Map icon" />
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    <!--===Header===-->
+    <!--===Page container===-->
+    <div class="toolsection">
+        <div class="relativdiv">
+            <div class="maptoolbox layer-box panel panel-primary draggable-panel toolbar-panel ui-draggable ui-resizable toolbox-tools ui-widget-content"
+                id="draggable">
+                <div class="panel-heading lang-panel-header-tools ui-draggable-handle">
+                    <img src="images/layer.png" width="50" alt="">
+                    <b class="min-portlet">Site Selection Criteria</b>
+
+                    <span class="close-panel min-portlet" data-class="layerOpacityIcon" id="close-toolbox-tools">
+                        <!-- <img src="images/close.png" width="18" alt=""></span> -->
+                        <!-- <span class="minmaze-panel"><img src="images/minimaze.png" width="18" alt=""></span> -->
+                </div>
+
+                <div class="div-content pd-0 min-portlet">
+                    <ul class="myMenu" id="cstTab">
+                        <!-- <li id="btn">
+              <label for="sch_layer" class="question subhd"><input type="checkbox" class="showAltPlot lrChk hdr-chkbox"
+                  id="sch_layer" value="School layer"> <span>School</span></label>
+              <span class="plus"><i class="fa fa-angle-down"></i></span>
+              <div class="showhidediv ">
+                <label for="opaRoadLine1">Transparency:</label>
+                <input id="op_school" type="range" class="slider" min="0" max="50" value="50" />
+                <div id="opacityRoadLine1" class="ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all"><div class="ui-slider-range ui-widget-header ui-corner-all ui-slider-range-max" style="width: 50%;"></div><span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0" style="left: 50%;"></span></div>
+              </div>
+            </li> -->
+                        <!-- <li><label for="buf_area" class="question subhd"><input type="checkbox" class="showAltPlot lrChk hdr-chkbox"
+                  id="buf_area" value="Buffer_area"> <span>Buffer (3 km)</span>
+              </label>
+              <span class="plus"><i class="fa fa-angle-down"></i></span>
+              <div class="showhidediv">
+                <label for="opaRoadLine1">Transparency:</label>
+                <input id="op_buffer" type="range" class="slider" min="0" max="50" value="50" />
+                <div id="opacityRoadLine1" class="ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all"><div class="ui-slider-range ui-widget-header ui-corner-all ui-slider-range-max" style="width: 50%;"></div><span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0" style="left: 50%;"></span></div>
+              </div>
+            </li> -->
+                        <li><label for="zone_bound" class="question subhd"><input type="checkbox"
+                                    class="showAltPlot lrChk hdr-chkbox" id="zone_bound" name="wmslayer"
+                                    value="Zone_boundaries">
+                                <span>Zone
+                                    boundaries</span>
+                            </label>
+                            <!-- <span class="plus"><i class="fa fa-angle-down"></i></span>
+              <div class="showhidediv ">
+                <label for="opaRoadLine1">Transparency:</label>
+                <input id="op_bound" type="range" class="slider" min="0" max="50" value="50" />
+                <div id="opacityRoadLine1" class="ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all">
+                  <div class="ui-slider-range ui-widget-header ui-corner-all ui-slider-range-max" style="width: 50%;"></div>
+                  <span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0" style="left: 50%;"></span>
+                </div>
+              </div> -->
+                        </li>
+                        <!-- <li><label for="p_sites" class="question subhd"><input type="checkbox" class="showAltPlot lrChk hdr-chkbox"
+                  id="p_sites" value="Potential_sites"> <span>Potential sites</span>
+              </label>
+              <span class="plus"><i class="fa fa-angle-down"></i></span>
+              <div class="showhidediv ">
+                <label for="opaRoadLine1">Transparency:</label>
+                <input id="op_pSite" type="range" class="slider" min="0" max="50" value="50" />
+                <div id="opacityRoadLine1" class="ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all"><div class="ui-slider-range ui-widget-header ui-corner-all ui-slider-range-max" style="width: 50%;"></div><span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0" style="left: 50%;"></span></div>
+              </div>
+            </li> -->
+                        <li><label for="pvt_svt" class="question subhd"><input type="checkbox"
+                                    class="showAltPlot lrChk hdr-chkbox" id="pvt_svt" name="wmslayer"
+                                    value="Poverty_Severty"> <span>Poverty Severity (2016)</span>
+                            </label>
+                            <span class="plus"><i class="fa fa-plus"></i></span>
+                            <div class="showhidediv ">
+                                <!--<label for="opaRoadLine1">Transparency:</label>
+                <input id="op_pvt" type="range" class="slider" min="0" max="50" value="50" />-->
+                                <!-- <div id="opacityRoadLine1" class="ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all"><div class="ui-slider-range ui-widget-header ui-corner-all ui-slider-range-max" style="width: 50%;"></div><span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0" style="left: 50%;"></span></div> -->
+                                <!--Tree structure legend added -->
+                                <!-- <div class="treesection">
+                  <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                    <div class="panel panel-default faqpanel">
+                      <div class="panel-heading" role="tab" id="heading23">
+                        <h4 class="panel-title screenreader"> <a role="button" data-toggle="collapse"
+                            data-parent="#accordion" href="#collapse23" aria-expanded="false" aria-controls="collapse23"
+                            class="collapsed"> <i class="more-less fa fa-plus"></i> Poverty Severity (2016) </a> </h4>
+                      </div>
+                      <div id="collapse23" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading23"
+                        aria-expanded="false" style="height: 0px;">
+                        <div class="panel-body screenreader" tabindex="23">
+                          <div class="pvtlegend" hidden="true" style="padding-top: 10px; display: block;">
+                            <div class="font"><i class="fa fa-square" aria-hidden="true" style="color:#ffe6e6;"></i>
+                              Lowest</div>
+                            <div class="font"><i class="fa fa-square" aria-hidden="true" style="color:#ff9999;"></i> Low
+                            </div>
+                            <div class="font"><i class="fa fa-square" aria-hidden="true" style="color:#ff4d4d;"></i>
+                              Medium</div>
+                            <div class="font"><i class="fa fa-square" aria-hidden="true" style="color:#ff1a1a;"></i>
+                              High</div>
+                            <div class="font"><i class="fa fa-square" aria-hidden="true" style="color:#ba0505;"></i>
+                              Highest</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div> -->
+                                <!--Tree structure legend added -->
+                                <h4><strong>Legend</strong></h4>
+                                <div class="pvtlegend" hidden="true" style="padding-top: 10px; display: block;">
+                                    <div class="font"><i class="fa fa-square" aria-hidden="true"
+                                            style="color:#ffe6e6;"></i>
+                                        Lowest</div>
+                                    <div class="font"><i class="fa fa-square" aria-hidden="true"
+                                            style="color:#ff9999;"></i> Low
+                                    </div>
+                                    <div class="font"><i class="fa fa-square" aria-hidden="true"
+                                            style="color:#ff4d4d;"></i>
+                                        Medium</div>
+                                    <div class="font"><i class="fa fa-square" aria-hidden="true"
+                                            style="color:#ff1a1a;"></i>
+                                        High</div>
+                                    <div class="font"><i class="fa fa-square" aria-hidden="true"
+                                            style="color:#ba0505;"></i>
+                                        Highest</div>
+                                </div>
+                            </div>
+                        </li>
+
+
+                        <li><label for="tot_pop" class="question subhd"><input type="checkbox"
+                                    class="showAltPlot lrChk hdr-chkbox" id="tot_pop" name="wmslayer"
+                                    value="Total_population"> <span>Total School Age Population</span>
+                            </label>
+                            <span class="plus"><i class="fa fa-plus"></i></span>
+                            <div class="showhidediv ">
+                                <!--<label for="opaRoadLine1">Transparency:</label>
+                <input id="op_total" type="range" class="slider" min="0" max="50" value="50" />-->
+                                <!-- <div id="opacityRoadLine1" class="ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all"><div class="ui-slider-range ui-widget-header ui-corner-all ui-slider-range-max" style="width: 50%;"></div><span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0" style="left: 50%;"></span></div> -->
+                                <!--Tree structure legend added -->
+                                <!-- <div class="treesection">
+                  <div class="panel-group" id="accordion2" role="tablist" aria-multiselectable="true">
+                    <div class="panel panel-default faqpanel">
+                      <div class="panel-heading" role="tab" id="heading24">
+                        <h4 class="panel-title screenreader"> <a role="button" data-toggle="collapse"
+                            data-parent="#accordion2" href="#collapse24" aria-expanded="false"
+                            aria-controls="collapse24" class="collapsed"> <i class="more-less fa fa-plus"></i> Estimated
+                            Total Secondary School Age Population (2018) </a> </h4>
+                      </div>
+                      <div id="collapse24" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading24"
+                        aria-expanded="false" style="height: 0px;">
+                        <div class="panel-body screenreader" tabindex="24">
+                          <div class="pvtlegend" hidden="true" style="padding-top: 10px; display: block;">
+                            <div class="font"><i class="fa fa-square" aria-hidden="true" style="color:#ffffcc;"></i>
+                              13,309 - 96,100</div>
+                            <div class="font"><i class="fa fa-square" aria-hidden="true" style="color:#ffff80;"></i>
+                              96,101 - 182,100
+                            </div>
+                            <div class="font"><i class="fa fa-square" aria-hidden="true" style="color:#ffff4d;"></i>
+                              182,101 - 210,900
+                            </div>
+                            <div class="font"><i class="fa fa-square" aria-hidden="true" style="color:#ffff00;"></i>
+                              210,901 - 292,300
+                            </div>
+                            <div class="font"><i class="fa fa-square" aria-hidden="true" style="color:#e6e600;"></i>
+                              292,301 - 410,700
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div> -->
+                                <!--Tree structure legend added -->
+                                <h4><strong>Legend</strong></h4>
+                                <div class="pvtlegend" hidden="true" style="padding-top: 10px; display: block;">
+                                    <div class="font"><i class="fa fa-square" aria-hidden="true"
+                                            style="color:#ffffe6;"></i>
+                                        13,309 - 41,115</div>
+                                    <div class="font"><i class="fa fa-square" aria-hidden="true"
+                                            style="color:#ffffb3;"></i>
+                                        41,116 - 132,249
+                                    </div>
+                                    <div class="font"><i class="fa fa-square" aria-hidden="true"
+                                            style="color:#ffff80;"></i>
+                                        132,250 - 190,845
+                                    </div>
+                                    <div class="font"><i class="fa fa-square" aria-hidden="true"
+                                            style="color:#ffff4d;"></i>
+                                        190,846 - 210,877
+                                    </div>
+                                    <div class="font"><i class="fa fa-square" aria-hidden="true"
+                                            style="color:#ffff1a;"></i>
+                                        210,878 to 229,573
+                                    </div>
+                                    <div class="font"><i class="fa fa-square" aria-hidden="true"
+                                            style="color:#e6e600;"></i>
+                                        229,574 - 292,245
+                                    </div>
+                                    <div class="font"><i class="fa fa-square" aria-hidden="true"
+                                            style="color:#b3b300;"></i>
+                                        292,246 to 310,015
+                                    </div>
+                                    <div class="font"><i class="fa fa-square" aria-hidden="true"
+                                            style="color:#808000;"></i>
+                                        310,016 to 410,630
+                                    </div>
+                                    <div class="font"><i class="fa fa-square" aria-hidden="true"
+                                            style="color:#d11f49;"></i> High Density
+                                        with high Poverty Severty</div>
+                                </div>
+                            </div>
+                        </li>
+
+                        <li><label for="male_pop" class="question subhd"><input type="checkbox"
+                                    class="showAltPlot lrChk hdr-chkbox" id="male_pop" name="wmslayer"
+                                    value="Male_population"> <span>Male School Age Population</span>
+                            </label>
+                            <span id="click_advance" class="plus"><i class="fa fa-plus"></i></span>
+                            <div class="showhidediv ">
+                                <!--<label for="opaRoadLine1">Transparency:</label>
+                <input id="op_male" type="range" class="slider" min="0" max="50" value="50" />-->
+                                <!-- <div id="opacityRoadLine1" class="ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all"><div class="ui-slider-range ui-widget-header ui-corner-all ui-slider-range-max" style="width: 50%;"></div><span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0" style="left: 50%;"></span></div> -->
+                                <!--Tree structure legend added -->
+                                <!-- <div class="treesection">
+                  <div class="panel-group" id="accordion3" role="tablist" aria-multiselectable="true">
+                    <div class="panel panel-default faqpanel">
+                      <div class="panel-heading" role="tab" id="heading25">
+                        <h4 class="panel-title screenreader"> <a role="button" data-toggle="collapse"
+                            data-parent="#accordion3" href="#collapse25" aria-expanded="false"
+                            aria-controls="collapse25" class="collapsed"> <i class="more-less fa fa-plus"></i> Estimated
+                            Male Secondary School Age Population (2018) </a> </h4>
+                      </div>
+                      <div id="collapse25" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading25"
+                        aria-expanded="false" style="height: 0px;">
+                        <div class="panel-body screenreader" tabindex="25">
+                          <div class="pvtlegend" hidden="true" style="padding-top: 10px; display: block;">
+                            <div class="font"><i class="fa fa-square" aria-hidden="true" style="color:#e6e6ff;"></i>
+                              5,621 - 46,900</div>
+                            <div class="font"><i class="fa fa-square" aria-hidden="true" style="color:#b3b3ff;"></i>
+                              46,901 - 90,400</div>
+                            <div class="font"><i class="fa fa-square" aria-hidden="true" style="color:#4d4dff;"></i>
+                              90,401 - 100,600
+                            </div>
+                            <div class="font"><i class="fa fa-square" aria-hidden="true" style="color:#0000e6;"></i>
+                              100,601 - 143,400
+                            </div>
+                            <div class="font"><i class="fa fa-square" aria-hidden="true" style="color:#000080;"></i>
+                              143,401 - 206,500
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div> -->
+                                <!--Tree structure legend added -->
+                                <h4><strong>Legend</strong></h4>
+                                <div class="pvtlegend" hidden="true" style="padding-top: 10px; display: block;">
+                                    <div class="font"><i class="fa fa-square" aria-hidden="true"
+                                            style="color:#e6e6ff;"></i>
+                                        5,621 - 17,508</div>
+                                    <div class="font"><i class="fa fa-square" aria-hidden="true"
+                                            style="color:#b3b3ff;"></i>
+                                        17,509 - 65,181</div>
+                                    <div class="font"><i class="fa fa-square" aria-hidden="true"
+                                            style="color:#8080ff;"></i>
+                                        65,182 - 91,819
+                                    </div>
+                                    <div class="font"><i class="fa fa-square" aria-hidden="true"
+                                            style="color:#4d4dff;"></i>
+                                        91,820 - 100,510
+                                    </div>
+                                    <div class="font"><i class="fa fa-square" aria-hidden="true"
+                                            style="color:#1a1aff;"></i>
+                                        100,511 - 114,402
+                                    </div>
+                                    <div class="font"><i class="fa fa-square" aria-hidden="true"
+                                            style="color:#0000e6;"></i>
+                                        114,403 - 143,304
+                                    </div>
+                                    <div class="font"><i class="fa fa-square" aria-hidden="true"
+                                            style="color:#0000b3;"></i>
+                                        143,305 - 156,627
+                                    </div>
+                                    <div class="font"><i class="fa fa-square" aria-hidden="true"
+                                            style="color:#000080;"></i>
+                                        156,628 - 206,402
+                                    </div>
+                                    <div class="font"><i class="fa fa-square" aria-hidden="true"
+                                            style="color:#d11f49;"></i> High Density
+                                        with high Poverty Severty</div>
+                                </div>
+                            </div>
+                        </li>
+
+                        <li><label for="female_pop" class="question subhd"><input type="checkbox"
+                                    class="showAltPlot lrChk hdr-chkbox" id="female_pop" name="wmslayer"
+                                    value="Female_population">
+                                <span>Female School Age Population</span>
+                            </label>
+                            <span class="plus"><i class="fa fa-plus"></i></span>
+                            <div class="showhidediv ">
+                                <!--<label for="opaRoadLine1">Transparency:</label>
+                <input id="op_female" type="range" class="slider" min="0" max="50" value="50" />-->
+                                <!-- <div id="opacityRoadLine1" class="ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all"><div class="ui-slider-range ui-widget-header ui-corner-all ui-slider-range-max" style="width: 50%;"></div><span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0" style="left: 50%;"></span></div> -->
+                                <!--Tree structure legend added -->
+                                <!-- <div class="treesection">
+                  <div class="panel-group" id="accordion4" role="tablist" aria-multiselectable="true">
+                    <div class="panel panel-default faqpanel">
+                      <div class="panel-heading" role="tab" id="heading26">
+                        <h4 class="panel-title screenreader"> <a role="button" data-toggle="collapse"
+                            data-parent="#accordion4" href="#collapse26" aria-expanded="false"
+                            aria-controls="collapse26" class="collapsed"> <i class="more-less fa fa-plus"></i> Estimated
+                            Female Secondary School Age Population (2018) </a> </h4>
+                      </div>
+                      <div id="collapse26" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading26"
+                        aria-expanded="false" style="height: 0px;">
+                        <div class="panel-body screenreader" tabindex="26">
+                          <div class="pvtlegend" hidden="true" style="padding-top: 10px; display: block;">
+                            <div class="font"><i class="fa fa-square" aria-hidden="true" style="color:#e6ffe6;"></i>
+                              7,688 - 49,300</div>
+                            <div class="font"><i class="fa fa-square" aria-hidden="true" style="color:#99ff99;"></i>
+                              49,301 - 91,700</div>
+                            <div class="font"><i class="fa fa-square" aria-hidden="true" style="color:#4dff4d;"></i>
+                              91,701 - 109,200
+                            </div>
+                            <div class="font"><i class="fa fa-square" aria-hidden="true" style="color:#00cc00;"></i>
+                              109,201 - 149,000
+                            </div>
+                            <div class="font"><i class="fa fa-square" aria-hidden="true" style="color:#008800;"></i>
+                              149,001 - 204,300
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div> -->
+                                <!--Tree structure legend added -->
+                                <h4><strong>Legend</strong></h4>
+                                <div class="pvtlegend" hidden="true" style="padding-top: 10px; display: block;">
+                                    <div class="font"><i class="fa fa-square" aria-hidden="true"
+                                            style="color:#e6ffe6;"></i>
+                                        7,688 - 23,607</div>
+                                    <div class="font"><i class="fa fa-square" aria-hidden="true"
+                                            style="color:#b3ffb3;"></i>
+                                        23,608 - 67,068</div>
+                                    <div class="font"><i class="fa fa-square" aria-hidden="true"
+                                            style="color:#80ff80;"></i>
+                                        67,069 - 96,420
+                                    </div>
+                                    <div class="font"><i class="fa fa-square" aria-hidden="true"
+                                            style="color:#4dff4d;"></i>
+                                        96,421 - 109,121
+                                    </div>
+                                    <div class="font"><i class="fa fa-square" aria-hidden="true"
+                                            style="color:#1aff1a;"></i>
+                                        109,122 - 115,171
+                                    </div>
+                                    <div class="font"><i class="fa fa-square" aria-hidden="true"
+                                            style="color:#00e600;"></i>
+                                        115,172 - 148,940
+                                    </div>
+                                    <div class="font"><i class="fa fa-square" aria-hidden="true"
+                                            style="color:#00b300;"></i>
+                                        148,941 to 153,388
+                                    </div>
+                                    <div class="font"><i class="fa fa-square" aria-hidden="true"
+                                            style="color:#008000;"></i>
+                                        153,389 to 204,228
+                                    </div>
+                                    <div class="font"><i class="fa fa-square" aria-hidden="true"
+                                            style="color:#d11f49;"></i> High Density
+                                        with high Poverty Severty</div>
+                                </div>
+                            </div>
+                        </li>
+
+                        <li id="btn"><label for="road" class="question subhd"><input type="checkbox"
+                                    class="showAltPlot lrChk hdr-chkbox" id="road" name="wmslayer"
+                                    value="Ethopia roads">
+                                <span>Roads</span>
+                            </label>
+                            <span class="plus"><i class="fa fa-plus"></i></span>
+                            <div class="showhidediv " id="searchContent">
+                                <!-- <label for="opaRoadLine1">Transparency:</label>
+                <input id="op_road" type="range" class="slider" min="0" max="50" value="50" /> -->
+                                <!-- <div id="opacityRoadLine1" class="ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all"><div class="ui-slider-range ui-widget-header ui-corner-all ui-slider-range-max" style="width: 50%;"></div><span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0" style="left: 50%;"></span></div> -->
+                                <!--Tree structure legend added -->
+                                <!-- <div class="treesection">
+                  <div class="panel-group" id="accordion5" role="tablist" aria-multiselectable="true">
+                    <div class="panel panel-default faqpanel">
+                      <div class="panel-heading" role="tab" id="heading27">
+                        <h4 class="panel-title screenreader"> 
+                          <a role="button" data-toggle="collapse"
+                            data-parent="#accordion5" href="#collapse27" aria-expanded="false"
+                            aria-controls="collapse27" class="collapsed"> <i class="more-less fa fa-plus"></i> Surface
+                            Type </a> </h4>
+                      </div>
+                      <div id="collapse27" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading27"
+                        aria-expanded="false" style="height: 0px;">
+                        <div class="panel-body screenreader" tabindex="27">
+                          <div class="pvtlegend" hidden="true" style="padding-top: 10px; display: block;">
+                            <div class="font"><img src="images/asphalt.png" height="8px" width="40px"> Asphalt</div>
+                            <div class="font"><img src="images/major.png" height="4px" width="40px"> Major Gravel</div>
+                            <div class="font"><img src="images/minor.png" height="2px" width="40px"> Minor Gravel</div>
+                            <div class="font"><img src="images/earth.png" height="1px" width="40px"> Earth</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div> -->
+                                <!--Tree structure legend added -->
+                                <h4><strong>Legend</strong></h4>
+                                <div class="pvtlegend" hidden="true" style="padding-top: 10px; display: block;">
+                                    <div class="font"><img src="images/asphalt.png" height="8px" width="40px"> Asphalt
+                                    </div>
+                                    <div class="font"><img src="images/major.png" height="4px" width="40px"> Major
+                                        Gravel</div>
+                                    <div class="font"><img src="images/minor.png" height="2px" width="40px"> Minor
+                                        Gravel</div>
+                                    <div class="font"><img src="images/earth.png" height="1px" width="40px"> Earth</div>
+                                </div>
+                            </div>
+                        </li>
+
+
+                        <li id="btn"><label for="electric_line" class="question subhd"><input type="checkbox"
+                                    class="showAltPlot lrChk hdr-chkbox" id="electric_line" name="wmslayer"
+                                    value="Electric line">
+                                <span>Electric line</span>
+                            </label>
+                            <span class="plus"><i class="fa fa-plus"></i></span>
+                            <div class="showhidediv " id="searchContent">
+
+                                <!--Tree structure legend added -->
+                                <h4><strong>Legend</strong></h4>
+                                <div class="pvtlegend" hidden="true" style="padding-top: 10px; display: block;">                                    
+                                    <div class="font"><img src="images/electric_line.png" height="12px" width="60px"> Electric Lines</div>
+                                </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--===Page container===-->
+
+    <div class="page-container">
+        <!--===Side Menu===-->
+        <div class="sidemenu">
+            <div id="main-menu">
+                <!--Heading "Identification of Potential School Sites" changed to "Identification of Potential School Sites"-->
+                <h4>Identification of Potential School Sites</h4>
+                <div class="nano-content" id="contAbCst">
+                    <!-- <div id="disSchool" class="noDisplayds boxCst">
+            
+            <label class="control-label" for="">Region Name</label>
+            <h3>Oromiya</h3>
+          </div> -->
+                    <div class="form-group">
+                        <label class="control-label" for="">Region Name</label>
+                        <select class="form-control" id="selRegion">
+                            <option value="">---Select Region---</option>
+                            <option value="Oromia"> Oromiya </option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label" for="">Zone Name</label>
+                        <select class="form-control" id="selZone">
+                            <option value="">---Select Zone---</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label" for="">Worida Name</label>
+                        <select class="form-control" id="selWorida">
+                            <option value="">---Select Worida---</option>
+                        </select>
+                    </div>
+
+
+                    <!--School labels changed to Drop down list-->
+                    <div class="form-group">
+                        <label class="control-label">Planning to Build...</label>
+                        <!-- <h4>Planning to Build</h4> -->
+                        <div>
+                            <select class="form-control" id="school">
+                                <option value="P" selected>Primary School</option>
+                                <option value="S">Secondary School</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!--School labels changed to Drop down list-->
+
+                    <!-- <div class="boxCst" id="schoolSec">
+             <div class="form-group">
+                    <label class="control-label" for="">To Grade</label>
+                    <select class="form-control" id="grade2">
+                      <option value="">---Select To Grade---</option>
+                      <option value="1"> Grade 1 </option>
+                    <option value="2"> Grade 2 </option>
+                    <option value="3"> Grade 3 </option>
+                    <option value="4"> Grade 4 </option>
+                    <option value="5"> Grade 5 </option>
+                    <option value="6"> Grade 6 </option>
+                    <option value="7"> Grade 7 </option>
+                    <option value="8"> Grade 8 </option>
+                    <option value="9"> Grade 9 </option>
+                    <option value="10"> Grade 10 </option>
+                    <option value="11"> Grade 11 </option>
+                    <option value="12"> Grade 12 </option>
+  
+                    </select>
+                  </div> 
+          </div> -->
+                    <!--<div class="boxCst noDisplayd" id="SeptoiletFaci">
+        <div class="checkbox">
+        <!-- Inline Checkboxes -- >
+            <input id="Checkbox6" class="magic-checkbox" type="checkbox" checked="">
+            <label for="demo-form-inline-checkbox">Primary</label>
+            <input id="Checkbox7" class="magic-checkbox" type="checkbox">
+            <label for="demo-form-inline-checkbox-3">Secondary</label>
+        </div>
+        </div>
+        <div class="boxCst noDisplayd" id="schoolAgewise">
+        <div class="checkbox">
+        <!-- Inline Checkboxes -- >
+            <input id="Checkbox8" class="magic-checkbox" type="checkbox" checked="">
+            <label for="demo-form-inline-checkbox">Age wise school reports</label>
+            
+        </div>
+        </div>-->
+                </div>
+            </div>
+
+            <!-----LEGEND----->
+            <div>
+
+
+
+
+                <!--instruction-->
+                <div class="bufferdiv" style="padding:10px;">
+                    <div class="heading" style="padding:5px;">
+                        <h4><strong>Instruction</strong></h4>
+                    </div>
+                    <div class="bufferbody">
+                        <ul>
+
+                            <li><span>1.</span> Select a region from dropdown list for wide analysis.</li>
+                            <li><span>2.</span> Choose any of the options from Planning to Build dropdown list (Primary/
+                                Secondary).
+                            </li>
+                            <li><span>3.</span> Click on Poverty Severty (2016).</li>
+                            <li><span>4.</span> After clicking Poverty Severty (2016), choose any one of the layer from
+                                Total/ Male/
+                                Female school age population layer to analysis the map.</li>
+                            <li><span>5.</span> Click on pan tool for navigating to the map layer.</li>
+
+                        </ul>
+                    </div>
+                </div>
+                <!--instruction-->
+            </div>
+            <!---LEGEND--->
+        </div>
+        <!--===Side Menu===-->
+
+        <!--===form page===-->
+        <div class="formpage">
+            <div class="row">
+                <div class="col-md-12 col-sm-12">
+                    <div class="panel panel-default">
+                        <!-- <div class="panel-heading">View School Details</div> -->
+
+                        <!-- BASIC FORM ELEMENTS -->
+                        <!--===================================================-->
+                        <div class="panel-body form-horizontal form-padding">
+                            <div class="floatingArea">
+                                <h3>BaseMap</h3>
+                                <a href="javascript:void(0);" title="Click here to close" class="closIcon"
+                                    id="clsIcon"><i class="fa fa-close" aria-hidden="true" style="font-size: 17px;"
+                                        id="clsicon"></i></a>
+                                <ul class="fltMenu">
+                                    <li>
+                                        <a href="javascript:void(0);" title="" name="disSchool" id="liOpenMap"
+                                            class="mapType active">
+                                            <span><img src="images/openlayer.png"></span>Open Layer Map</a>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:void(0);" title="" name="disSchool" id="liBingMap"
+                                            class="mapType"><span><img src="images/bing_sat.png"></span>Bing Map</a>
+                                    </li>
+                                    <!--<li>
+                            <a href="javascript:void(0);" title="" name="disSchool" id="liBingRoadMap" class="mapType" ><span><img
+                                  src="images/bing_road.png"></span>Bing Road Map</a>
+                          </li> -->
+                                </ul>
+                            </div>
+                            <div id="map" class="map"></div>
+
+                            <div style="display: none;">
+                                <!-- Clickable label for Vienna -->
+                                <a class="overlay" id="vienna" target="_blank"
+                                    href="http://en.wikipedia.org/wiki/Vienna">Vienna</a>
+                                <div id="marker" title="Marker"></div>
+                                <!-- Popup -->
+                                <div id="popup" title="Welcome to OpenLayers"></div>
+                            </div>
+                        </div>
+                        <!--===================================================-->
+                        <!-- END BASIC FORM ELEMENTS -->
+                    </div>
+                    <!--Pan buttons-->
+
+
+                    <div class="icons">
+                        <a href="javascript:void(0);">
+                            <div class="righticon" id="right"><i class="fa fa-chevron-right"></i></div>
+                        </a>
+                        <a href="javascript:void(0);">
+                            <div class="lefticon" id="left"><i class="fa fa-chevron-left"></i></div>
+                        </a>
+                        <a href="javascript:void(0);">
+                            <div class="upicon" id="up"><i class="fa fa-chevron-up"></i></div>
+                        </a>
+                        <a href="javascript:void(0);">
+                            <div class="downicon" id="down"><i class="fa fa-chevron-down"></i></div>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!--===form page===-->
+    </div>
+    <!--===Page container===-->
+
+    <script type="text/javascript">
+        $("#loaderPage").hide();
+        var regionVal = "";
+        var zoneVal = "";
+        var regionText = "";
+        var zoneText = "";
+        var mapType = 1;
+        var zoomVal = 6.5;
+        var searchFieldInput = "";
+        var measurementVal = 1;
+        var zoneMasterData = "";
+
+        $(document).ready(function () {
+            callAnalysisZone();
+        });
+
+
+        /*******INITIAL MAP RENDERING ******/
+        var raster = new ol.layer.Tile({
+            source: new ol.source.OSM()
+        });
+
+
+        var view = new ol.View({
+            // projection: "EPSG:4326",
+            //   center: [38.763611,9.005401],
+            center: ol.proj.transform([40.6347, 7.5460], 'EPSG:4326', 'EPSG:3857'),
+            zoom: zoomVal
+        });
+
+        var map = new ol.Map({
+            controls: ol.control
+                .defaults({
+                    attributionOptions: {
+                        collapsible: false
+                    }
+                })
+            ,
+            interactions: ol.interaction
+                .defaults()
+                .extend([new ol.interaction.DragRotateAndZoom()]),
+            layers: [raster],
+
+            target: "map",
+
+            view: view
+        });
+
+        var scaleLineControl = new ol.control.ScaleLine();
+
+        map.addControl(scaleLineControl);
+
+        var popup = new ol.Overlay({
+            element: document.getElementById("popup")
+        });
+        map.addOverlay(popup);
+        /*******INITIAL MAP RENDERING ******/
+
+
+
+
+      //   var electricLines = new ol.layer.Image({
+      //       source: new ol.source.ImageWMS({
+      //           url: "http://192.168.10.45:8080/geoserver/wms",
+      //           params: { LAYERS: "ETH_SCHOOL:oromia_eleclines_view" },
+      //           serverType: "geoserver",
+      //           crossOrigin: "anonymous"
+      //       })
+      //   });
+
+
+
+
+        /////////////////////////////////////CHANGING EVENTS/////////////////////////////////////////////////
+
+        /*Changing of primary/secondary potential layer when dropdown list changes of plannnig to Build **/
+        $("#school").change(function () {
+            clearAllLayers();  //function cliear all site selection criteria layers
+            var schoolType = document.getElementById("school").value;
+            var zone = document.getElementById("selZone").value;
+            callAnalysisZone();
+        });
+
+        //Change event on poverty severity 
+        $("#pvt_svt").change(function () {
+            if ($(this).is(':checked')) {
+                checkPopulationLayers();
+            } else {
+                checkPopulationLayers();
+                map.removeLayer(povertyLayer);
+            }
+            checkRoad();
+            checkElectricLine();
+        });
+        var populationType = 0;
+        //Change event on Total Population
+        $("#tot_pop").change(function () {
+            populationType = 1;
+            $("#male_pop").prop("checked", false);
+            $("#female_pop").prop("checked", false);
+            map.removeLayer(malePopulationLayer);
+            map.removeLayer(femalePopulationLayer);
+            if ($(this).is(':checked')) {
+                if ($("#pvt_svt").is(':checked')) {
+                    map.removeLayer(povertyLayer);
+                    var schoolType = document.getElementById("school").value;
+                    var zone = document.getElementById("selZone").value;
+                    callTotalPopulationAnalysisZone(schoolType, zone);
+                } else {
+                    map.removeLayer(totalPopulationAnalysis);
+                    var schoolType = document.getElementById("school").value;
+                    var zone = document.getElementById("selZone").value;
+                    callTotalPopulationZone(schoolType, zone);
+                }
+            } else {
+                if ($('#pvt_svt').is(':checked')) {
+                    map.addLayer(povertyLayer);
+                }
+                map.removeLayer(totalPopulationLayer);
+                clearAnalysisLayers();
+            }
+            checkRoad();
+            checkElectricLine();
+        });
+
+        //Change event on Male Population
+        $("#male_pop").change(function () {
+            populationType = 2;
+            $("#tot_pop").prop("checked", false);
+            $("#female_pop").prop("checked", false);
+            map.removeLayer(totalPopulationLayer);
+            map.removeLayer(femalePopulationLayer);
+            if ($(this).is(':checked')) {
+                if ($("#pvt_svt").is(':checked')) {
+                    map.removeLayer(povertyLayer);
+                    var schoolType = document.getElementById("school").value;
+                    var zone = document.getElementById("selZone").value;
+                    callMalePopulationAnalysisZone(schoolType, zone);
+                } else {
+                    map.removeLayer(malePopulationAnalysis);
+                    var schoolType = document.getElementById("school").value;
+                    var zone = document.getElementById("selZone").value;
+                    callMalePopulationZone(schoolType, zone);
+                }
+            } else {
+                if ($('#pvt_svt').is(':checked')) {
+                    map.addLayer(povertyLayer);
+                }
+                map.removeLayer(malePopulationLayer);
+                clearAnalysisLayers();
+            }
+            checkRoad();
+            checkElectricLine();
+        });
+
+
+        //Change event on Female Population
+        $("#female_pop").change(function () {
+            populationType = 3;
+            $("#male_pop").prop("checked", false);
+            $("#tot_pop").prop("checked", false);
+            map.removeLayer(malePopulationLayer);
+            map.removeLayer(totalPopulationLayer);
+            if ($(this).is(':checked')) {
+                if ($("#pvt_svt").is(':checked')) {
+                    map.removeLayer(povertyLayer);
+                    var schoolType = document.getElementById("school").value;
+                    var zone = document.getElementById("selZone").value;
+                    callFemalePopulationAnalysisZone(schoolType, zone);
+                } else {
+                    map.removeLayer(femalePopulationAnalysis);
+                    var schoolType = document.getElementById("school").value;
+                    var zone = document.getElementById("selZone").value;
+                    callFemalePopulationZone(schoolType, zone);
+                }
+            } else {
+                if ($('#pvt_svt').is(':checked')) {
+                    map.addLayer(povertyLayer);
+                }
+                map.removeLayer(femalePopulationLayer);
+                clearAnalysisLayers();
+            }
+            checkRoad();
+            checkElectricLine();
+        });
+
+        //Change event on Orm Zone Boundary
+        $("#zone_bound").change(function () {
+            if ($(this).is(':checked')) {
+                var zone = document.getElementById("selZone").value;
+                callZoneBoundary(zone);
+            } else {
+                map.removeLayer(zoneBoundary);
+            }
+            checkRoad();
+            checkElectricLine();
+        });
+
+        //Change event on Orm Road
+        $("#road").change(function () {
+            if ($(this).is(':checked')) {
+                var zone = document.getElementById("selZone").value;
+                callOrmRoad(zone);
+            } else {
+                map.removeLayer(ormRoad);
+            }
+            checkElectricLine();
+        });
+
+        //Change event on Orm Electric Lines
+        $("#electric_line").change(function () {
+            if ($(this).is(':checked')) {
+               //  map.addLayer(electricLines);
+               var zone = document.getElementById("selZone").value;
+               callElectricLine(zone);
+            } else {
+                map.removeLayer(electricLines);
+            }
+        });
+
+
+
+        function checkRoad() {
+            if ($("#road").is(':checked')) {
+                map.removeLayer(ormRoad);
+                var zone = document.getElementById("selZone").value;
+                callOrmRoad(zone);
+            }else{
+                map.removeLayer(ormRoad); 
+            }
+        }
+
+        function checkElectricLine() {
+            if ($("#electric_line").is(':checked')) {
+                var zone = document.getElementById("selZone").value;
+                callElectricLine(zone);
+            }else{
+                map.removeLayer(electricLines);
+            }
+        }
+
+
+
+
+        function clearAnalysisLayers() {
+            map.removeLayer(totalPopulationAnalysis);
+            map.removeLayer(malePopulationAnalysis);
+            map.removeLayer(femalePopulationAnalysis);
+        }
+        ///////////////////////////////////////**********************////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+        ////////////////////////////////*****POPULATING DROPDOWN ******///////////////////////////////////
+        $("#selRegion").change(function () {
+            regionText = "";
+            zoneText = "";
+            regionVal = "";
+            zoneVal = "";
+            $("#selZone").html("");
+            $("#selZone").append('<option value="">--Select Zone--</option>');
+            regionText = $("#selRegion :selected").text();
+            regionVal = $("#selRegion").val();
+            if (regionVal != "") {
+                //$("#loaderPage").show();
+                callZone();
+            } else {
+                regionText = "";
+                zoneText = "";
+                woridaText = "";
+                regionVal = "";
+                zoneVal = "";
+                woridaVal = "";
+                //callApi();
+            }
+        });
+function getUrlVars()
+{
+    var vars = [], hash;
+    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+    for(var i = 0; i < hashes.length; i++)
+    {
+        hash = hashes[i].split('=');
+        vars.push(hash[0]);
+        vars[hash[0]] = hash[1];
+    }
+    return vars;
+}
+var authId = getUrlVars()["username"];
+if(authId=='testuser1'){
+$('#printMap').show()
+$('#dvjson').show()
+$('#linkBuffer').attr('href', 'buffer.html?username='+authId);
+$('#linkIndex').attr('href', 'index.html?username='+authId);
+$('#linkToilet').attr('href', 'toilet.html?username='+authId);
+$('#linkSector').attr('href', 'sector.html?username='+authId);
+$('#linkAnalysis').attr('href', 'analysis.html?username='+authId);
+}
+else{
+$('#printMap').hide()
+$('#dvjson').hide()
+}
+        function callZone() {
+            $.ajax({
+                url: "http://192.168.10.45:3001/fillMapZonesNew",
+                type: "POST",
+                dataType: "json",
+                data: { region: regionVal, regionName: regionText },
+                success: function (data, textStatus, xhr) {
+                    console.log(data)
+                    $("#loaderPage").hide();
+                    zoneMasterData = data;
+                    $("#selZone").html("");
+                    var campHtml = '<option value="">--Select Zone--</option>';
+                    for (var i = 0; i < zoneMasterData.msg.length; i++) {
+                        campHtml +=
+                            '<option value="' +
+                            zoneMasterData.msg[i].z_name +
+                            '">' +
+                            zoneMasterData.msg[i].z_name +
+                            "</option>";
+                    }
+                    $("#selZone").append(campHtml);
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    console.log("Error in Operation");
+                }
+            });
+        }
+
+        $("#selRegion").change(function () {
+            clearAllLayers();
+            callAnalysisZone();
+        });
+
+        $("#selZone").change(function () {
+            clearAllLayers();
+            callAnalysisZone();
+        });
+
+        //////////////////////////////***********************//////////////////////////////////////
+
+
+
+
+
+        //////////////////////////////////////////////////////////////////UPDATING wms_layers/////////////////////////////////////////////////////////////////
+
+        /******Function for update Potential sites data*******/
+        function callAnalysisZone() {
+            //alert('a')
+            var schoolType = document.getElementById("school").value;
+            var zoneText = document.getElementById("selZone").value;
+            var dataObj = {
+                schoolType: schoolType,
+                zone: zoneText,
+            };
+            console.log(dataObj);
+            /*var dataObj = {
+                  schoolType: "P",
+                  zone: "Jimma",
+                };*/
+            $.ajax({
+                url: "http://192.168.10.45:3001/analysisZones",
+                type: "POST",
+                dataType: "json",
+                data: dataObj,
+                success: function (data, textStatus, xhr) {
+                    $("#loaderPage").hide();
+                    console.log(data)
+                    //map.removeLayer(wmsLayer);
+                    updateWMSLayer(schoolType);
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    $("#loaderPage").hide();
+                    console.log("Error in Operation");
+                }
+            });
+        }
+
+        /*****************************************************************************/
+
+
+
+
+        /******Function for update poverty data*******/
+        function callPovertyZone(schoolType, zoneText) {
+            var dataObj = {
+                schoolType: schoolType,
+                zone: zoneText,
+            };
+            //console.log(dataObj);
+            $.ajax({
+                url: "http://192.168.10.45:3001/povertyZones",
+                type: "POST",
+                dataType: "json",
+                data: dataObj,
+                success: function (data, textStatus, xhr) {
+                    $("#loaderPage").hide();
+                    console.log(data)
+                    //map.removeLayer(wmsLayer);
+                    updatePovertyLayer(schoolType);
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    $("#loaderPage").hide();
+                    console.log("Error in Operation");
+                }
+            });
+        }
+        /*****************************************************************************/
+
+
+
+
+        /*************Function for update total polpulation data********************/
+        function callTotalPopulationZone(schoolType, zoneText) {
+            var dataObj = {
+                schoolType: schoolType,
+                zone: zoneText,
+            };
+            //console.log(dataObj);
+            $.ajax({
+                url: "http://192.168.10.45:3001/populationZones",
+                type: "POST",
+                dataType: "json",
+                data: dataObj,
+                success: function (data, textStatus, xhr) {
+                    $("#loaderPage").hide();
+                    console.log(data)
+                    updateTotalPopulationLayer(schoolType);
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    $("#loaderPage").hide();
+                    console.log("Error in Operation");
+                }
+            });
+        }
+        /*****************************************************************************/
+
+
+
+
+        /*************Function for update male polpulation data********************/
+        function callMalePopulationZone(schoolType, zoneText) {
+            var dataObj = {
+                schoolType: schoolType,
+                zone: zoneText,
+            };
+            //console.log(dataObj);
+            $.ajax({
+                url: "http://192.168.10.45:3001/malePopulationZones",
+                type: "POST",
+                dataType: "json",
+                data: dataObj,
+                success: function (data, textStatus, xhr) {
+                    $("#loaderPage").hide();
+                    console.log(data)
+                    updateMalePopulationLayer(schoolType);
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    $("#loaderPage").hide();
+                    console.log("Error in Operation");
+                }
+            });
+        }
+        /*****************************************************************************/
+
+
+
+
+        /*************Function for update female polpulation data********************/
+        function callFemalePopulationZone(schoolType, zoneText) {
+            var dataObj = {
+                schoolType: schoolType,
+                zone: zoneText,
+            };
+            //console.log(dataObj);
+            $.ajax({
+                url: "http://192.168.10.45:3001/femalePopulationZones",
+                type: "POST",
+                dataType: "json",
+                data: dataObj,
+                success: function (data, textStatus, xhr) {
+                    $("#loaderPage").hide();
+                    console.log(data)
+                    updateFemalePopulationLayer(schoolType);
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    $("#loaderPage").hide();
+                    console.log("Error in Operation");
+                }
+            });
+        }
+        /*****************************************************************************/
+
+
+
+
+
+        /*************Function for update zone boundary data********************/
+        function callZoneBoundary(zoneText) {
+            var dataObj = {
+                zone: zoneText,
+            };
+            $.ajax({
+                url: "http://192.168.10.45:3001/zoneBoundary",
+                type: "POST",
+                dataType: "json",
+                data: dataObj,
+                success: function (data, textStatus, xhr) {
+                    $("#loaderPage").hide();
+                    console.log(data)
+                    updateZoneBoundaryLayer();
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    $("#loaderPage").hide();
+                    console.log("Error in Operation");
+                }
+            });
+        }
+        /*****************************************************************************/
+
+
+
+
+
+        /*************Function for update orm road data********************/
+        function callOrmRoad(zoneText) {
+            var dataObj = {
+                zone: zoneText,
+            };
+            $.ajax({
+                url: "http://192.168.10.45:3001/ormRoad",
+                type: "POST",
+                dataType: "json",
+                data: dataObj,
+                success: function (data, textStatus, xhr) {
+                    $("#loaderPage").hide();
+                    console.log(data)
+                    updateOrmRoadLayer();
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    $("#loaderPage").hide();
+                    console.log("Error in Operation");
+                }
+            });
+        }
+        /*****************************************************************************/
+
+
+        /*************Function for update orm electricline data********************/
+        function callElectricLine(zoneText) {            
+            var dataObj = {
+                zone: zoneText,
+            };
+            $.ajax({
+                url: "http://192.168.10.45:3001/electricLine",
+                type: "POST",
+                dataType: "json",
+                data: dataObj,
+                success: function (data, textStatus, xhr) {
+                    $("#loaderPage").hide();
+                    console.log(data)
+                    updateOrmElectricLineLayer();
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    $("#loaderPage").hide();
+                    console.log("Error in Operation");
+                }
+            });
+        }
+        /*****************************************************************************/
+
+
+
+        /*************Function for update total polpulation analysis data********************/
+        function callTotalPopulationAnalysisZone(schoolType, zoneText) {
+            var dataObj = {
+                schoolType: schoolType,
+                zone: zoneText,
+            };
+            //console.log(dataObj);
+            $.ajax({
+                url: "http://192.168.10.45:3001/totalPopulationAnalysisZones",
+                type: "POST",
+                dataType: "json",
+                data: dataObj,
+                success: function (data, textStatus, xhr) {
+                    $("#loaderPage").hide();
+                    console.log(data)
+                    //map.removeLayer(wmsLayer);
+                    updateTotalPopulationAnalysisLayer(schoolType);
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    $("#loaderPage").hide();
+                    console.log("Error in Operation");
+                }
+            });
+        }
+
+        /*****************************************************************************/
+
+
+
+
+
+        /*************Function for update male polpulation analysis data********************/
+        function callMalePopulationAnalysisZone(schoolType, zoneText) {
+            var dataObj = {
+                schoolType: schoolType,
+                zone: zoneText,
+            };
+            //console.log(dataObj);
+            $.ajax({
+                url: "http://192.168.10.45:3001/malePopulationAnalysisZones",
+                type: "POST",
+                dataType: "json",
+                data: dataObj,
+                success: function (data, textStatus, xhr) {
+                    $("#loaderPage").hide();
+                    console.log(data)
+                    //map.removeLayer(wmsLayer);
+                    updateMalePopulationAnalysisLayer(schoolType);
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    $("#loaderPage").hide();
+                    console.log("Error in Operation");
+                }
+            });
+        }
+
+        /*****************************************************************************/
+
+
+
+
+        /*************Function for update male polpulation analysis data********************/
+        function callFemalePopulationAnalysisZone(schoolType, zoneText) {
+            var dataObj = {
+                schoolType: schoolType,
+                zone: zoneText,
+            };
+            //console.log(dataObj);
+            $.ajax({
+                url: "http://192.168.10.45:3001/femalePopulationAnalysisZones",
+                type: "POST",
+                dataType: "json",
+                data: dataObj,
+                success: function (data, textStatus, xhr) {
+                    $("#loaderPage").hide();
+                    console.log(data)
+                    //map.removeLayer(wmsLayer);
+                    updateFemalePopulationAnalysisLayer(schoolType);
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    $("#loaderPage").hide();
+                    console.log("Error in Operation");
+                }
+            });
+        }
+
+        /*****************************************************************************/
+
+        //////////////////////////////////////////////////////////////////******************/////////////////////////////////////////////////////////////////
+
+
+
+
+
+        ////////////////////////////////////////////////UPDATING WMS_LAYER VARIABLES///////////////////////////////////////////////////
+
+        /**********Function to update wmsLayer value*******************/
+        var wmsLayer;
+        function updateWMSLayer(schoolType) {
+            map.removeLayer(wmsLayer)
+            var tTime = Math.floor(Math.random() * 1000000000).toString();
+            if (schoolType == 'P') {
+                wmsLayer = new ol.layer.Image({
+                    source: new ol.source.ImageWMS({
+                        url: "http://192.168.10.45:8080/geoserver/wms?id=" + tTime,
+                        params: { LAYERS: "ETH_SCHOOL:orm_primary_potential_view" },
+                        serverType: "geoserver",
+                        crossOrigin: "anonymous"
+                    })
+                });
+            } else {
+                wmsLayer = new ol.layer.Image({
+                    source: new ol.source.ImageWMS({
+                        url: "http://192.168.10.45:8080/geoserver/wms?id=" + tTime,
+                        params: { LAYERS: "ETH_SCHOOL:orm_secondary_potential_view" },
+                        serverType: "geoserver",
+                        crossOrigin: "anonymous"
+                    })
+                });
+            }
+            map.addLayer(wmsLayer);
+        }
+        /****************************************************************************/
+
+
+
+
+
+
+        /**********Function to update povertyLayer value*******************/
+        var povertyLayer;
+        function updatePovertyLayer(schoolType) {
+            map.removeLayer(povertyLayer)
+            var tTime = Math.floor(Math.random() * 1000000000).toString();
+            if (schoolType == 'P') {
+                povertyLayer = new ol.layer.Image({
+                    source: new ol.source.ImageWMS({
+                        url: "http://192.168.10.45:8080/geoserver/wms?id=" + tTime,
+                        params: { LAYERS: "ETH_SCHOOL:orm_primary_potential_poverty_view" },
+                        serverType: "geoserver",
+                        crossOrigin: "anonymous"
+                    })
+                });
+            } else {
+                povertyLayer = new ol.layer.Image({
+                    source: new ol.source.ImageWMS({
+                        url: "http://192.168.10.45:8080/geoserver/wms?id=" + tTime,
+                        params: { LAYERS: "ETH_SCHOOL:orm_secondary_potential_poverty_view" },
+                        serverType: "geoserver",
+                        crossOrigin: "anonymous"
+                    })
+                });
+            }
+            map.addLayer(povertyLayer);
+        }
+        /****************************************************************************/
+
+
+
+
+
+
+
+
+
+        /**********Function to update totalPopulationLayer value *******************/
+        var totalPopulationLayer;
+        function updateTotalPopulationLayer(schoolType) {
+            map.removeLayer(totalPopulationLayer);
+            var tTime = Math.floor(Math.random() * 1000000000).toString();
+            if (schoolType == 'P') {
+                totalPopulationLayer = new ol.layer.Image({
+                    source: new ol.source.ImageWMS({
+                        url: "http://192.168.10.45:8080/geoserver/wms?id=" + tTime,
+                        params: { LAYERS: "ETH_SCHOOL:orm_primary_potential_malefemale_view" },
+                        serverType: "geoserver",
+                        crossOrigin: "anonymous"
+                    })
+                });
+            } else {
+                totalPopulationLayer = new ol.layer.Image({
+                    source: new ol.source.ImageWMS({
+                        url: "http://192.168.10.45:8080/geoserver/wms?id=" + tTime,
+                        params: { LAYERS: "ETH_SCHOOL:orm_secondary_potential_malefemale_view" },
+                        serverType: "geoserver",
+                        crossOrigin: "anonymous"
+                    })
+                });
+            }
+            map.addLayer(totalPopulationLayer);
+        }
+        /****************************************************************************/
+
+
+
+
+
+
+
+        /**********Function for update  malePopulationLayer value*******************/
+        var malePopulationLayer;
+        function updateMalePopulationLayer(schoolType) {
+            map.removeLayer(malePopulationLayer);
+            var tTime = Math.floor(Math.random() * 1000000000).toString();
+            if (schoolType == 'P') {
+                malePopulationLayer = new ol.layer.Image({
+                    source: new ol.source.ImageWMS({
+                        url: "http://192.168.10.45:8080/geoserver/wms?id=" + tTime,
+                        params: { LAYERS: "ETH_SCHOOL:orm_primary_potential_male_view" },
+                        serverType: "geoserver",
+                        crossOrigin: "anonymous"
+                    })
+                });
+            } else {
+                malePopulationLayer = new ol.layer.Image({
+                    source: new ol.source.ImageWMS({
+                        url: "http://192.168.10.45:8080/geoserver/wms?id=" + tTime,
+                        params: { LAYERS: "ETH_SCHOOL:orm_secondary_potential_male_view" },
+                        serverType: "geoserver",
+                        crossOrigin: "anonymous"
+                    })
+                });
+            }
+            map.addLayer(malePopulationLayer);
+        }
+        /****************************************************************************/
+
+
+
+
+
+
+
+        /**********Function for update femalePopulationLayer value *******************/
+        var femalePopulationLayer;
+        function updateFemalePopulationLayer(schoolType) {
+            map.removeLayer(femalePopulationLayer);
+            var tTime = Math.floor(Math.random() * 1000000000).toString();
+            if (schoolType == 'P') {
+                femalePopulationLayer = new ol.layer.Image({
+                    source: new ol.source.ImageWMS({
+                        url: "http://192.168.10.45:8080/geoserver/wms?id=" + tTime,
+                        params: { LAYERS: "ETH_SCHOOL:orm_primary_potential_female_view" },
+                        serverType: "geoserver",
+                        crossOrigin: "anonymous"
+                    })
+                });
+            } else {
+                femalePopulationLayer = new ol.layer.Image({
+                    source: new ol.source.ImageWMS({
+                        url: "http://192.168.10.45:8080/geoserver/wms?id=" + tTime,
+                        params: { LAYERS: "ETH_SCHOOL:orm_secondary_potential_female_view" },
+                        serverType: "geoserver",
+                        crossOrigin: "anonymous"
+                    })
+                });
+            }
+            map.addLayer(femalePopulationLayer);
+        }
+        /****************************************************************************/
+
+
+
+
+
+
+
+
+
+        /**********Function for update zoneBoundary value *******************/
+        var zoneBoundary;
+        function updateZoneBoundaryLayer() {
+            map.removeLayer(zoneBoundary);
+            var tTime = Math.floor(Math.random() * 1000000000).toString();
+            zoneBoundary = new ol.layer.Image({
+                source: new ol.source.ImageWMS({
+                    url: "http://192.168.10.45:8080/geoserver/wms?id=" + tTime,
+                    params: { LAYERS: "ETH_SCHOOL:orm_zone_boundary_view" },
+                    serverType: "geoserver",
+                    crossOrigin: "anonymous"
+                })
+            });
+            map.addLayer(zoneBoundary);
+        }
+        /****************************************************************************/
+
+
+
+
+
+        /**********Function for update ormRoad value*******************/
+        var ormRoad;
+        function updateOrmRoadLayer() {
+            map.removeLayer(ormRoad);
+            var tTime = Math.floor(Math.random() * 1000000000).toString();
+            ormRoad = new ol.layer.Image({
+                source: new ol.source.ImageWMS({
+                    url: "http://192.168.10.45:8080/geoserver/wms?id=" + tTime,
+                    params: { LAYERS: "ETH_SCHOOL:orm_road_view" },
+                    serverType: "geoserver",
+                    crossOrigin: "anonymous"
+                })
+            });
+            map.addLayer(ormRoad);
+        }
+        /****************************************************************************/
+
+         /**********Function for update ormElectricLine value*******************/
+         var electricLines;
+        function updateOrmElectricLineLayer() {
+            map.removeLayer(electricLines);
+            var tTime = Math.floor(Math.random() * 1000000000).toString();
+            electricLines = new ol.layer.Image({
+                source: new ol.source.ImageWMS({
+                    url: "http://192.168.10.45:8080/geoserver/wms?id=" + tTime,
+                    params: { LAYERS: "ETH_SCHOOL:oromia_eleclines_view" },
+                    serverType: "geoserver",
+                    crossOrigin: "anonymous"
+                })
+            });
+            map.addLayer(electricLines);
+        }
+        /****************************************************************************/
+
+
+
+
+        /**********Function for update totalPopulationAnalysis value *******************/
+        var totalPopulationAnalysis;
+        function updateTotalPopulationAnalysisLayer(schoolType) {
+            map.removeLayer(totalPopulationAnalysis);
+            var tTime = Math.floor(Math.random() * 1000000000).toString();
+            if (schoolType == 'P') {
+                totalPopulationAnalysis = new ol.layer.Image({
+                    source: new ol.source.ImageWMS({
+                        url: "http://192.168.10.45:8080/geoserver/wms?id=" + tTime,
+                        params: { LAYERS: "ETH_SCHOOL:orm_primary_total_analysis_view" },
+                        serverType: "geoserver",
+                        crossOrigin: "anonymous"
+                    })
+                });
+            } else {
+                totalPopulationAnalysis = new ol.layer.Image({
+                    source: new ol.source.ImageWMS({
+                        url: "http://192.168.10.45:8080/geoserver/wms?id=" + tTime,
+                        params: { LAYERS: "ETH_SCHOOL:orm_secondary_total_analysis_view" },
+                        serverType: "geoserver",
+                        crossOrigin: "anonymous"
+                    })
+                });
+            }
+            map.addLayer(totalPopulationAnalysis);
+        }
+        /****************************************************************************/
+
+
+
+
+        /**********Function for update totalPopulationAnalysis value *******************/
+        var malePopulationAnalysis;
+        function updateMalePopulationAnalysisLayer(schoolType) {
+            map.removeLayer(malePopulationAnalysis);
+            var tTime = Math.floor(Math.random() * 1000000000).toString();
+            if (schoolType == 'P') {
+                malePopulationAnalysis = new ol.layer.Image({
+                    source: new ol.source.ImageWMS({
+                        url: "http://192.168.10.45:8080/geoserver/wms?id=" + tTime,
+                        params: { LAYERS: "ETH_SCHOOL:orm_primary_male_analysis_view" },
+                        serverType: "geoserver",
+                        crossOrigin: "anonymous"
+                    })
+                });
+            } else {
+                malePopulationAnalysis = new ol.layer.Image({
+                    source: new ol.source.ImageWMS({
+                        url: "http://192.168.10.45:8080/geoserver/wms?id=" + tTime,
+                        params: { LAYERS: "ETH_SCHOOL:orm_secondary_male_analysis_view" },
+                        serverType: "geoserver",
+                        crossOrigin: "anonymous"
+                    })
+                });
+            }
+            map.addLayer(malePopulationAnalysis);
+        }
+        /****************************************************************************/
+
+
+
+
+        /**********Function for update totalPopulationAnalysis value *******************/
+        var femalePopulationAnalysis;
+        function updateFemalePopulationAnalysisLayer(schoolType) {
+            map.removeLayer(femalePopulationAnalysis);
+            var tTime = Math.floor(Math.random() * 1000000000).toString();
+            if (schoolType == 'P') {
+                femalePopulationAnalysis = new ol.layer.Image({
+                    source: new ol.source.ImageWMS({
+                        url: "http://192.168.10.45:8080/geoserver/wms?id=" + tTime,
+                        params: { LAYERS: "ETH_SCHOOL:orm_primary_female_analysis_view" },
+                        serverType: "geoserver",
+                        crossOrigin: "anonymous"
+                    })
+                });
+            } else {
+                femalePopulationAnalysis = new ol.layer.Image({
+                    source: new ol.source.ImageWMS({
+                        url: "http://192.168.10.45:8080/geoserver/wms?id=" + tTime,
+                        params: { LAYERS: "ETH_SCHOOL:orm_secondary_female_analysis_view" },
+                        serverType: "geoserver",
+                        crossOrigin: "anonymous"
+                    })
+                });
+            }
+            map.addLayer(femalePopulationAnalysis);
+        }
+        /****************************************************************************/
+
+        ////////////////////////////////////////////////************************************///////////////////////////////////////////////////
+
+
+
+
+
+
+
+        /////////////clear Site Selection Criteria Layers/////////////
+        function clearAllLayers() {
+            map.removeLayer(povertyLayer);
+            $("#pvt_svt").prop("checked", false);
+            map.removeLayer(totalPopulationLayer);
+            $("#tot_pop").prop("checked", false);
+            map.removeLayer(malePopulationLayer);
+            $("#male_pop").prop("checked", false);
+            map.removeLayer(femalePopulationLayer);
+            $("#female_pop").prop("checked", false);
+            map.removeLayer(zoneBoundary);
+            $("#zone_bound").prop("checked", false);
+            map.removeLayer(ormRoad);
+            $("#road").prop("checked", false);
+            map.removeLayer(electricLines);
+            $("#electric_line").prop("checked", false);
+
+
+            map.removeLayer(totalPopulationAnalysis);
+            map.removeLayer(malePopulationAnalysis);
+            map.removeLayer(femalePopulationAnalysis);
+
+            populationType = 0;
+        }
+        ////////////***********************************//////////////////
+
+
+
+
+
+
+
+
+        ///////MANGING POPULATION LAYER AND POPULATION ANALYSIS LAYER FOR CHANGING ACTION ON PVT AND OTHER POPULATION LAYERS/////////////////////////////
+        function checkPopulationLayers() {
+            var schoolType = document.getElementById('school').value;
+            var zoneText = document.getElementById('selZone').value;
+            if ($("#pvt_svt").is(":checked")) {
+                if (populationType == 1) {
+                    if ($("#tot_pop").is(':checked')) {
+                        map.removeLayer(totalPopulationLayer);
+                        callTotalPopulationAnalysisZone(schoolType, zoneText);
+                    } else {
+                        map.removeLayer(totalPopulationAnalysis);
+                        callPovertyZone(schoolType, zoneText);
+                    }
+                }
+                else if (populationType == 2) {
+                    if ($("#male_pop").is(':checked')) {
+                        map.removeLayer(malePopulationLayer);
+                        callMalePopulationAnalysisZone(schoolType, zoneText);
+                    } else {
+                        map.removeLayer(malePopulationAnalysis);
+                        callPovertyZone(schoolType, zoneText);
+                    }
+                }
+                else if (populationType == 3) {
+                    if ($("#female_pop").is(':checked')) {
+                        map.removeLayer(femalePopulationLayer);
+                        callFemalePopulationAnalysisZone(schoolType, zoneText);
+                    } else {
+                        map.removeLayer(femalePopulationAnalysis);
+                        callPovertyZone(schoolType, zoneText);
+                    }
+                } else {
+                    callPovertyZone(schoolType, zoneText);
+                }
+            } else {
+                if ($("#tot_pop").is(':checked')) {
+                    callTotalPopulationZone(schoolType, zoneText);
+                }
+                if ($("#male_pop").is(':checked')) {
+                    callMalePopulationZone(schoolType, zoneText);
+                }
+                if ($("#female_pop").is(':checked')) {
+                    callFemalePopulationZone(schoolType, zoneText);
+                }
+            }
+            checkRoad();
+            checkElectricLine();
+        }
+        ////////////////////////////////////////////////***************************************////////////////////////////////////////////
+    </script>
+
+    <script>
+        var sourceDraw = new ol.source.Vector();
+        $("#draw").click(function () {
+            if (measurementVal == 1) {
+                map.addLayer(vectorDraw);
+                addInteraction();
+                measurementVal = 2
+            }
+            else {
+                //measurementVal = 1
+                clearDraw()
+            }
+
+        });
+
+        function clearDraw() {
+            measurementVal = 1
+            map.removeInteraction(draw);
+            map.removeLayer(vectorDraw);
+            sourceDraw.clear();
+            map.removeOverlay(helpTooltip);
+            map.removeOverlay(measureTooltip);
+            $('.ol-overlay-container').find('.tooltip-static').hide()
+            // var len=document.getElementsByClassName('ol-overlay-container ol-selectable').length
+            // for(var i=0;i<=len;i++){
+            //   if(document.getElementsByClassName('ol-overlay-container ol-selectable')[0]){
+            //     document.getElementsByClassName('ol-overlay-container ol-selectable')[0].remove();
+            //   }
+            // }
+        }
+
+
+
+        var vectorDraw = new ol.layer.Vector({
+            source: sourceDraw,
+            style: new ol.style.Style({
+                fill: new ol.style.Fill({
+                    color: 'rgba(255, 255, 255, 0.2)'
+                }),
+                stroke: new ol.style.Stroke({
+                    color: '#ffcc33',
+                    width: 2
+                }),
+                image: new ol.style.Circle({
+                    radius: 7,
+                    fill: new ol.style.Fill({
+                        color: '#ffcc33'
+                    })
+                })
+            })
+        });
+
+
+
+
+        /**
+             * Currently drawn feature.
+             * @type {ol.Feature}
+             */
+        var sketch;
+
+
+        /**
+         * The help tooltip element.
+         * @type {Element}
+         */
+        var helpTooltipElement;
+
+
+        /**
+         * Overlay to show the help messages.
+         * @type {ol.Overlay}
+         */
+        var helpTooltip;
+
+
+        /**
+         * The measure tooltip element.
+         * @type {Element}
+         */
+        var measureTooltipElement;
+
+
+        /**
+         * Overlay to show the measurement.
+         * @type {ol.Overlay}
+         */
+        var measureTooltip;
+
+
+        /**
+         * Message to show when the user is drawing a polygon.
+         * @type {string}
+         */
+        var continuePolygonMsg = 'Click to continue drawing the polygon';
+
+        var draw; // global so we can remove it later
+
+        function addInteraction() {
+
+            /**
+             * Message to show when the user is drawing a line.
+             * @type {string}
+             */
+            var continueLineMsg = 'Click to continue drawing the line';
+            var type = 'LineString'//(typeSelect.value == 'area' ? 'Polygon' : 'LineString');
+            draw = new ol.interaction.Draw({
+                source: sourceDraw,
+                type: type,
+                style: new ol.style.Style({
+                    fill: new ol.style.Fill({
+                        color: 'rgba(255, 255, 255, 0.2)'
+                    }),
+                    stroke: new ol.style.Stroke({
+                        color: 'rgba(0, 0, 0, 0.5)',
+                        lineDash: [10, 10],
+                        width: 2
+                    }),
+                    image: new ol.style.Circle({
+                        radius: 5,
+                        stroke: new ol.style.Stroke({
+                            color: 'rgba(0, 0, 0, 0.7)'
+                        }),
+                        fill: new ol.style.Fill({
+                            color: 'rgba(255, 255, 255, 0.2)'
+                        })
+                    })
+                })
+            });
+            map.addInteraction(draw);
+
+            createMeasureTooltip();
+            createHelpTooltip();
+
+            var listener;
+            draw.on('drawstart',
+                function (evt) {
+                    // set sketch
+                    sketch = evt.feature;
+
+                    /** @type {ol.Coordinate|undefined} */
+                    var tooltipCoord = evt.coordinate;
+
+                    listener = sketch.getGeometry().on('change', function (evt) {
+                        var geom = evt.target;
+                        var output;
+                        output = formatLength(geom);
+                        //console.log(output)
+                        tooltipCoord = geom.getLastCoordinate();
+                        measureTooltipElement.innerHTML = output;
+                        measureTooltip.setPosition(tooltipCoord);
+                    });
+                }, this);
+
+            draw.on('drawend',
+                function (e) {
+                    measureTooltipElement.className = 'tooltip tooltip-static';
+                    measureTooltip.setOffset([0, -7]);
+                    // unset sketch
+                    sketch = null;
+                    // unset tooltip so that a new one can be created
+                    measureTooltipElement = null;
+                    createMeasureTooltip();
+                    ol.Observable.unByKey(listener);
+
+                }, this);
+
+            /**
+      * Creates a new help tooltip
+      */
+            function createHelpTooltip() {
+                if (helpTooltipElement) {
+                    helpTooltipElement.parentNode.removeChild(helpTooltipElement);
+                }
+                helpTooltipElement = document.createElement('div');
+                helpTooltipElement.className = 'tooltip hidden';
+                helpTooltip = new ol.Overlay({
+                    element: helpTooltipElement,
+                    offset: [15, 0],
+                    positioning: 'center-left'
+                });
+                map.addOverlay(helpTooltip);
+
+            }
+
+
+            /**
+             * Creates a new measure tooltip
+             */
+            function createMeasureTooltip() {
+                if (measureTooltipElement) {
+                    measureTooltipElement.parentNode.removeChild(measureTooltipElement);
+                }
+                measureTooltipElement = document.createElement('div');
+                measureTooltipElement.className = 'tooltip tooltip-measure';
+                measureTooltip = new ol.Overlay({
+                    element: measureTooltipElement,
+                    offset: [0, -15],
+                    positioning: 'bottom-center'
+                });
+                map.addOverlay(measureTooltip);
+            }
+
+            var pointerMoveHandler = function (evt) {
+                if (evt.dragging) {
+                    return;
+                }
+                /** @type {string} */
+                var helpMsg = 'Click to start drawing';
+
+                if (sketch) {
+                    var geom = (sketch.getGeometry());
+                    if (geom instanceof ol.geom.Polygon) {
+                        helpMsg = continuePolygonMsg;
+                    } else if (geom instanceof ol.geom.LineString) {
+                        helpMsg = continueLineMsg;
+                    }
+                }
+                //console.log(helpMsg)
+                helpTooltipElement.innerHTML = helpMsg;
+
+                helpTooltip.setPosition(evt.coordinate);
+
+                helpTooltipElement.classList.remove('hidden');
+            };
+            map.on('pointermove', pointerMoveHandler);
+
+            map.getViewport().addEventListener('mouseout', function () {
+                helpTooltipElement.classList.add('hidden');
+            });
+
+            var typeSelect = document.getElementById('type');
+
+
+
+
+            /**
+             * Format length output.
+             * @param {ol.geom.LineString} line The line.
+             * @return {string} The formatted length.
+             */
+            var formatLength = function (line) {
+                var length = ol.Sphere.getLength(line);
+                var output;
+                if (length > 100) {
+                    output = (Math.round(length / 1000 * 100) / 100) +
+                        ' ' + 'km';
+                } else {
+                    output = (Math.round(length * 100) / 100) +
+                        ' ' + 'm';
+                }
+                return output;
+            };
+
+
+            /**
+             * Format area output.
+             * @param {ol.geom.Polygon} polygon The polygon.
+             * @return {string} Formatted area.
+             */
+            var formatArea = function (polygon) {
+                var area = ol.Sphere.getArea(polygon);
+                var output;
+                if (area > 10000) {
+                    output = (Math.round(area / 1000000 * 100) / 100) +
+                        ' ' + 'km<sup>2</sup>';
+                } else {
+                    output = (Math.round(area * 100) / 100) +
+                        ' ' + 'm<sup>2</sup>';
+                }
+                return output;
+            };
+        }
+        function myFunction() {
+            $(element).popover("destroy");
+        }
+
+
+
+
+        //*Script code for Pan the map*/
+        $("#up").click(function () {
+            var currentLoc = view.getCenter();
+            var loc = ol.proj.toLonLat(currentLoc);
+            var lon = loc[0];
+            var lat = loc[1] + 1;
+            var nextLoc = ol.proj.transform([lon, lat], 'EPSG:4326', 'EPSG:3857');
+            view.animate({
+                center: nextLoc,
+                duration: 100
+            })
+        });
+
+        $("#right").click(function () {
+            var currentLoc = view.getCenter();
+            var loc = ol.proj.toLonLat(currentLoc);
+            var lon = loc[0] + 1;
+            var lat = loc[1];
+            var nextLoc = ol.proj.transform([lon, lat], 'EPSG:4326', 'EPSG:3857');
+            view.animate({
+                center: nextLoc,
+                duration: 100
+            })
+        });
+
+
+        $("#down").click(function () {
+            var currentLoc = view.getCenter();
+            var loc = ol.proj.toLonLat(currentLoc);
+            var lon = loc[0];
+            var lat = loc[1] - 1;
+            var nextLoc = ol.proj.transform([lon, lat], 'EPSG:4326', 'EPSG:3857');
+            view.animate({
+                center: nextLoc,
+                duration: 100
+            })
+        });
+
+        $("#left").click(function () {
+            var currentLoc = view.getCenter();
+            var loc = ol.proj.toLonLat(currentLoc);
+            var lon = loc[0] - 1;
+            var lat = loc[1];
+            var nextLoc = ol.proj.transform([lon, lat], 'EPSG:4326', 'EPSG:3857');
+            view.animate({
+                center: nextLoc,
+                duration: 100
+            })
+        });
+        //*Script code for Pan the map*/
+
+
+
+        $("#home").on("click", function () {  ///Zoom to addisAbbaba
+            clearDraw()
+            zoomVal = 11;
+            view.setCenter(ol.proj.transform([38.763611, 9.005401], 'EPSG:4326', 'EPSG:3857'));
+            view.setZoom(zoomVal);
+        });
+        /* View in fullscreen */
+        var elem = document.getElementById("map");
+        function openFullscreen() {
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            } else if (elem.mozRequestFullScreen) {
+                /* Firefox */
+                elem.mozRequestFullScreen();
+            } else if (elem.webkitRequestFullscreen) {
+                /* Chrome, Safari and Opera */
+                elem.webkitRequestFullscreen();
+            } else if (elem.msRequestFullscreen) {
+                /* IE/Edge */
+                elem.msRequestFullscreen();
+            }
+        }
+        $("#fullScrn").click(function () {
+            clearDraw()
+            openFullscreen();
+        });
+
+
+
+
+        var dims = {
+            a0: [1189, 841],
+            a1: [841, 594],
+            a2: [594, 420],
+            a3: [420, 297],
+            a4: [297, 210],
+            a5: [210, 148]
+        };
+        var loading = 0;
+        var loaded = 0;
+
+        var exportButton = document.getElementById("printMap");
+
+        exportButton.addEventListener(
+            "click",
+            function () {
+                exportButton.disabled = true;
+                document.body.style.cursor = "progress";
+
+                var format = "a4";
+                var resolution = "150";
+                var dim = dims[format];
+                var width = Math.round((dim[0] * resolution) / 25.4);
+                var height = Math.round((dim[1] * resolution) / 25.4);
+                var size = /** @type {ol.Size} */ (map.getSize());
+                var extent = map.getView().calculateExtent(size);
+
+                var source = raster.getSource();
+
+                var tileLoadStart = function () {
+                    ++loading;
+                };
+
+                var tileLoadEnd = function () {
+                    ++loaded;
+                    if (loading === loaded) {
+                        var canvas = this;
+                        window.setTimeout(function () {
+                            loading = 0;
+                            loaded = 0;
+                            var data = canvas.toDataURL("image/png");
+                            var pdf = new jsPDF("landscape", undefined, format);
+                            pdf.addImage(data, "JPEG", 0, 0, dim[0], dim[1]);
+                            pdf.save("map.pdf");
+                            source.un("tileloadstart", tileLoadStart);
+                            source.un("tileloadend", tileLoadEnd, canvas);
+                            source.un("tileloaderror", tileLoadEnd, canvas);
+                            map.setSize(size);
+                            map.getView().fit(extent);
+                            map.renderSync();
+                            exportButton.disabled = false;
+                            document.body.style.cursor = "auto";
+                        }, 100);
+                    }
+                };
+
+                map.once("postcompose", function (event) {
+                    source.on("tileloadstart", tileLoadStart);
+                    source.on("tileloadend", tileLoadEnd, event.context.canvas);
+                    source.on("tileloaderror", tileLoadEnd, event.context.canvas);
+                });
+
+                map.setSize([width, height]);
+                map.getView().fit(extent);
+                map.renderSync();
+            },
+            false
+        );
+    </script>
+
+    <!-- Modal -->
+    <div id="aboutconten" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title"> About ETH School Mapping </h4>
+                </div>
+                <div class="modal-body">
+                    <p>The World Bank education team in Ethiopia seeks the professional services of a firm specializing
+                        in GIS
+                        analysis to develop school maps for Ethiopia. The school mapping exercise will serve as an input
+                        in
+                        determining where, when, and what type of schools to construct by the Federal Ministry of
+                        Education,
+                        Regional Education Bureaus, Zonal and Woreda Education offices. Hence, school construction can
+                        be based on
+                        objective measures. </p>
+                    <br>
+                    <p> The proposed analysis will utilize GIS methods using spatial (geo-referenced) and non-spatial
+                        attribute
+                        data. A census of all schools (pre-primary (O-class) up to secondary schools including private,
+                        public,
+                        etc.) in Ethiopia will be conducted to collect location coordinates and other school-level
+                        administration
+                        data. Secondary data from previous surveys such as the Demographic and Health Surveys (DHS);
+                        Household,
+                        Income, and Consumption Expenditure (HICE); and World Banks’ Living Standards Measurement
+                        Surveys (LSMS) for
+                        Ethiopia will be utilized to complement the survey. Ministry of Education also has GIS data for
+                        many
+                        schools, approximately 60 to 70 percent of all public schools. While some of the data are
+                        obsolete, a
+                        selected firm may be able to make use of the available data to increase efficiency of data
+                        collection. The
+                        usage of the GIS data available in the Ministry should be approved by the Ministry.</p>
+                    <br>
+                    <p> The proposed analysis will provide a broad overview of the current school distribution, the
+                        synergy in the
+                        distribution of primary and secondary schools, and picture of the state of education resources
+                        allocation by
+                        developing and launching a spatial dataset with a graphic and visual web interface It will also
+                        identify
+                        potential channels of influence and partners for engagement to achieve equity and quality in the
+                        education
+                        sector in Ethiopia. </p>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="modal fade" id="myModalSchoolDtl" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel"></h4>
+                </div>
+                <div class="modal-body">
+                    <div id="scholDetalmodal">
+                        <div class="col-sm-6">
+                            <div class="school-slider">
+                                <div class="item active" id="divimg1">
+                                    <!-- <img src="images/Gulen-schools4.jpg" id="img1" alt="Gulen School"> -->
+                                    <div class="item active" id="divimg1">
+                                        <img id="img1" alt="Gulen School" style="object-fit: cover;
+                    max-height: 307px;
+                    width: 100%;
+                    display: block;
+                    margin: 0px auto;">
+
+                                    </div>
+
+                                </div>
+                                <!-- <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+  
+				  <ol class="carousel-indicators hideList">
+					<li data-target="#carousel-example-generic" data-slide-to="0" class="active" id="scroll1"></li>
+					<li data-target="#carousel-example-generic" data-slide-to="1" id="scroll2"></li>
+					
+				  </ol>
+
+				 
+				  <div class="carousel-inner" role="listbox">
+					<div class="item active" id="divimg1">
+					  <img src="images/Gulen-schools4.jpg" id="img1" alt="Gulen School">
+					  
+					</div>
+					<div class="item" id="divimg2">
+					  <img src="images/Gulen-schools4.jpg" id="img2" alt="Gulen School">
+					  
+					</div>
+				  </div>
+
+				  
+				  <a class="left carousel-control hideList" href="#carousel-example-generic" role="button" data-slide="prev">
+					<i class="fa fa-angle-left" aria-hidden="true"></i>
+					<span class="sr-only">Previous</span>
+				  </a>
+				  <a class="right carousel-control hideList" href="#carousel-example-generic" role="button" data-slide="next">
+					<i class="fa fa-angle-right" aria-hidden="true"></i>
+					<span class="sr-only">Next</span>
+				  </a>
+				</div>   -->
+                            </div>
+                        </div>
+                        <div class="col-sm-6 p-l-0">
+                            <div class="school-map">
+                                <div id="map1" style="height: 307px"></div>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="schooldetailsec">
+                        <table id="tblData" class="table table-striped" cellpadding="2" cellspacing="0" border="0">
+
+                        </table>
+                        <!--<h3>School Name : <small>Ai International School </small></h3>
+			<h3>Region Name : <small>Addis Ababa Central </small></h3>
+			  <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged</p>-->
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <style>
+        .showhidediv {
+            display: none;
+
+        }
+
+        .showhidediv.in {
+            display: block;
+        }
+
+
+        .legend {
+            font-weight: 600;
+            font-family: TTM-light, sans-serif;
+            border-bottom: 1px solid #cad9e2;
+            margin: 0 0 5px 0;
+            padding: 0 0 5px 0;
+        }
+
+
+        .plus i {
+            font-size: 1.5rem;
+            margin-top: 4px;
+        }
+
+        .font {
+            font-family: 'Roboto-Regular';
+            color: #000;
+            margin-left: 6px;
+            margin-bottom: 2px;
+            font-weight: normal;
+        }
+
+        .ol-zoom {
+            top: 0.5em;
+            left: 1.4em;
+        }
+
+        .treesection a {
+            font-family: 'Roboto-Regular';
+            font-weight: normal;
+        }
+
+        .panel-title {
+            margin-top: 0;
+            font-size: 16px;
+        }
+
+        .showhidediv h4 {
+            margin-left: 5px;
+        }
+    </style>
+    <script src="js/custom.js"></script>
+    <script>
+        $(document).ready(function () {
+
+            $('.myMenu li span.plus').each(function () {
+                $(this).click(function () {
+                    //alert(0);
+                    $(this).parent('li').find('.showhidediv').toggleClass('in')
+                    $(this).find('i').toggleClass('fa fa-plus fa fa-minus')
+                });
+            });
+        })
+
+
+        $("#op_road").change(function () {
+            var value = $("#op_road").val();
+            eth_road.setOpacity(value / 50);
+        });
+        $("#op_bound").change(function () {
+            var value = $("#op_bound").val();
+            zone_boundary.setOpacity(value / 50);
+        });
+        $("#op_pvt").change(function () {
+            var value = $("#op_pvt").val();
+            if (schoolValue == 1) {
+                eth_pvt_svt_primary.setOpacity(value / 50);
+            } else {
+                eth_pvt_svt_secondary.setOpacity(value / 50);
+            }
+        });
+        $("#op_male").change(function () {
+            var value = $("#op_male").val();
+            if (schoolValue == 1) {
+                primary_male_pop.setOpacity(value / 50);
+            } else {
+                secondary_male_pop.setOpacity(value / 50);
+            }
+        });
+        $("#op_female").change(function () {
+            var value = $("#op_female").val();
+            if (schoolValue == 1) {
+                primary_female_pop.setOpacity(value / 50);
+            } else {
+                secondary_female_pop.setOpacity(value / 50);
+            }
+        });
+        $("#op_total").change(function () {
+            var value = $("#op_total").val();
+            if (schoolValue == 1) {
+                primary_total_pop.setOpacity(value / 50);
+            } else {
+                secondary_total_pop.setOpacity(value / 50);
+            }
+        });
+
+        $(function () {
+            $("#draggable").draggable();
+        });
+
+
+//     $('#click_advance').click(function() {
+//     $('.showhidediv').toggle('1000');
+//     $("i", this).toggleClass("icon-circle-arrow-up icon-circle-arrow-down");
+// });
+    </script>
+
+</body>
+
+</html>
